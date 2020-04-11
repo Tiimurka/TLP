@@ -164,7 +164,7 @@ void expr_lex (char *buf, std::vector<Token> *Tokens){
 }
 
 void vec_copy(std::vector<Token> old_vec, std::vector<Token> *new_vec, unsigned int l, unsigned int r){
-	for(unsigned i = l; i <= r; i++){
+	for(unsigned int i = l; i <= r; i++){
 		new_vec->push_back(old_vec[i]);
 	}
 }
