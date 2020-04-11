@@ -1,0 +1,19 @@
+prog -> pre main
+pre -> pre_part | pre_part pre | eps
+pre_part -> TC_VAR var TC_SEMICOLON
+var -> var_ids TC_COLON var_decl
+var_ids -> TC_ID | TC_ID TC_COMMA var_ids
+var_decl -> TC_T_ARRAY decl_array | var_types
+decl_array -> TC_LBRACKET TC_NUM TC_DOUBLEDOT TC_NUM TC_RBRACKET TC_OF var_types
+var_types -> TC_T_INT | TC_T_REAL | TC_T_STRING
+main -> TC_BEGIN m_cont TC_END_PROG
+m_cont -> sent TC_SEMICOLON | sent TC_SEMICOLON m_cont  | TC_IF if | TC_IF if m_cont
+if -> if_part | if_part TC_ELSE (TC_ID TC_ASSIGN assign | TC_BEGIN f_body TC_END_FUNC) | if_part TC_ELSE TC_IF if_part
+if_part ->num_expr TC_THEN (TC_ID TC_ASSIGN assign | TC_BEGIN f_body TC_END_FUNC)
+sent -> TC_ID TC_LPAREN f_cont TC_RPAREN | TC_ID TC_ASSIGN assign | TC_REPEAT TC_BEGIN f_body TC_END_FUNC UNTIL num_expr
+ | TC_WHILE num_expr TC_DO TC_BEGIN f_body TC_END_FUNC | 
+f_cont -> arg | arg TC_COMMA f_cont
+arg -> TC_STRING | TC_ID | num_expr
+assign -> TC_ID | num_expr 
+num_expr -> num_fact | num_fact (TC_PLUS | TC_MINUS | TC_ASTER | TC_SLASH | TC_DIV | TC_MOD | TC_ISEQUAL | TC_ISLESS | TC_ISMORE | TC_OR | TC_AND) num_expr
+num_fact -> (NUM | TC_ID) | TC_LPAREN expr TC_RPAREN
