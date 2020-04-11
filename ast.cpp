@@ -258,7 +258,7 @@ bool show_node (struct ast *node, unsigned int tablevel)
 	//if(node->type == AST_TYPE_TOKEN){}
 
 	std::cout << "Node " << AST_NAMES[node->type] << ", " << node->nodes.size() << " elements: ";
-	for(unsigned i = 0; i < node->nodes.size(); i++){
+	for(unsigned int i = 0; i < node->nodes.size(); i++){
 		if(node->nodes[i].type == AST_TYPE_NODE)
 			std::cout << AST_NAMES[node->nodes[i].ptr_n->type] << ", ";
 		else if(node->nodes[i].type == AST_TYPE_TOKEN)
