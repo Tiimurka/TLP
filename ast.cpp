@@ -68,12 +68,12 @@ int get_prior(int type, int par_pr){
 	return 9999;
 }
 
-int get_type(std::string Lexeme){
+unsigned int get_type(std::string Lexeme){
 	char str[5];
 	unsigned int i;
 	for(i = 0; i < Lexeme.size(); i++)
 		str[i] = Lexeme[i];
-	i++;
+	//i++;
 	str[i] = '\0';
 	if (std::strcmp(str, "+") == 0)
 		return AST_BINOP_PLUS;
@@ -97,7 +97,8 @@ int get_type(std::string Lexeme){
 		return AST_LOGIC_OR;
 	else if (std::strcmp(str, "and") == 0)
 		return AST_LOGIC_AND;
-	return 9999;
+	else
+		return 9999;
 }
 
 void expr_lex (char *buf, std::vector<Token> *Tokens){
@@ -263,6 +264,8 @@ bool show_node (struct ast *node, unsigned int tablevel)
 			std::cout << AST_NAMES[node->nodes[i].ptr_n->type] << ", ";
 		else if(node->nodes[i].type == AST_TYPE_TOKEN)
 			std::cout << TC_NAMES[node->nodes[i].ptr_t->TokenClass] << " = " << node->nodes[i].ptr_t->Lexeme << ", ";
+		else
+			std::cout << "Ебать ты лох\n";
 	}
 	std::cout << "\n";
 	return true;

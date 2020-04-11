@@ -25,7 +25,7 @@ struct ast{
 };
 
 struct ast_node{
-	bool type;
+	unsigned int type;
 	struct Token *ptr_t;
 	struct ast *ptr_n;
 };
@@ -35,7 +35,7 @@ struct ast_node *node_create(struct Token *t, struct ast *n);
 void node_insert(struct ast *tree, struct Token *t, unsigned int type);
 
 int get_prior(int type, int par_pr);
-int get_type(std::string Lexeme);
+unsigned int get_type(std::string Lexeme);
 void expr_lex (char *buf, std::vector<Token> *Tokens);
 void expr_insert(struct ast *tree, char *expr);
 void ex_ins_rec(struct ast *tree, std::vector<Token> vec);
