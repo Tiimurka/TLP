@@ -264,8 +264,6 @@ bool show_node (struct ast *node, unsigned int tablevel)
 			std::cout << AST_NAMES[node->nodes[i].ptr_n->type] << ", ";
 		else if(node->nodes[i].type == AST_TYPE_TOKEN)
 			std::cout << TC_NAMES[node->nodes[i].ptr_t->TokenClass] << " = " << node->nodes[i].ptr_t->Lexeme << ", ";
-		else
-			std::cout << "Ебать ты лох\n";
 	}
 	std::cout << "\n";
 	return true;
