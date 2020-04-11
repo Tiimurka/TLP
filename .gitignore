@@ -1,0 +1,4 @@
+parse
+utest_lex
+utest_parse
+build/*.o
