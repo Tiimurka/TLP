@@ -22,7 +22,7 @@ build/utest_lex.o:
 	c++ -Wall -c utest_lex.cpp -o build/utest_lex.o
 
 utest_parse: build/utest_parse.o build/lex.o build/parse.o  build/ast.o
-	c++ -Wall build/utest_parse.o build/lex.o build/parse.o  build/ast.o -o parse
+	c++ -Wall build/utest_parse.o build/lex.o build/parse.o  build/ast.o -o utest_parse
 
 build/utest_parse.o:
 	c++ -Wall -c utest_parse.cpp -o build/utest_parse.o
