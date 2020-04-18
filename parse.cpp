@@ -107,6 +107,11 @@ int parse_pre_part(Token *token, struct ast *tree){
 		ret+=parse_var(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
 		if (ret != 0)
 			return -1;
+	}else if (tmp_token->TokenClass == TC_FUNC){
+		node_insert(tree, NULL, AST_FUNC_DECL);
+		ret+=parse_func_decl(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
+		if (ret != 0)
+			return -1;
 	}else{
 		std::cout << "Line " << tmp_token->row << ": unknown pre_part, found " << tmp_token->Lexeme << "\n"; 
 		return -1;
@@ -186,7 +191,7 @@ int parse_var_decl(Token *token, struct ast *tree){
 	//std::cout << "I am entering parse_var_decl, current token is " << token->Lexeme << "\n"; 
 	int ret = 0;
 	Token *tmp_token;
-	tmp_token = token;
+	//tmp_token = token;
 	tmp_token = GNT();
 	if(tmp_token == NULL)
 		return -1;
@@ -284,6 +289,82 @@ int parse_types(Token *token, struct ast *tree){
 			return -1;
 	}
 	return ret;
+}
+
+int parse_func_decl(Token *token, struct ast *tree){
+	//std::cout << "I am entering parse_func, current token is " << token->Lexeme << "\n";
+	int ret = 0;
+	Token *tmp_token;
+	tmp_token = GNT();
+	if(tmp_token == NULL)
+		return -1;
+	if(tmp_token->TokenClass == TC_ID){
+		tmp_token = GNT();
+		if(tmp_token == NULL)
+			return -1;
+		if(tmp_token->TokenClass == TC_LPAREN){
+			node_insert(tree, NULL, AST_VAR);
+			ret+=parse_var(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
+			if (ret != 0)
+				return -1;
+			tmp_token = GNT();
+			if(tmp_token == NULL)
+				return -1;
+			if(tmp_token->TokenClass == TC_RPAREN){
+				tmp_token = GNT();
+				if(tmp_token == NULL)
+					return -1;
+				if(tmp_token->TokenClass == TC_COLON){
+					ret+=parse_var_decl(tmp_token, tree);
+					tmp_token = GNT();
+					if(tmp_token == NULL)
+						return -1;
+					if(tmp_token->TokenClass == TC_SEMICOLON){
+						tmp_token = GNT();
+						if(tmp_token == NULL)
+							return -1;
+						simskip(&tmp_token);
+						if(tmp_token->TokenClass == TC_BEGIN){
+							tmp_token = GNT();
+							if(tmp_token == NULL)
+								return -1;
+							node_insert(tree, NULL, AST_F_BODY);
+							ret+=parse_f_body(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
+							if (ret != 0)
+								return -1;
+							tmp_token = GNT();
+							if(tmp_token == NULL)
+								return -1;
+							if(tmp_token->TokenClass == TC_END_FUNC){
+								return ret;
+							}else{
+								std::cout << "Line " << tmp_token->row << ": missing function ending, found " << tmp_token->Lexeme << "\n";
+								return -1;
+							}
+						}else{
+							std::cout << "Line " << tmp_token->row << ": missing beginning of the function, found " << tmp_token->Lexeme << "\n";
+							return -1;
+						}
+					}else{
+						std::cout << "Line " << tmp_token->row << ": missing semicolon, found " << tmp_token->Lexeme << "\n";
+						return -1;
+					}
+				}else{
+					std::cout << "Line " << tmp_token->row << ": missing colon, found " << tmp_token->Lexeme << "\n";
+					return -1;
+				}
+			}else{
+				std::cout << "Line " << tmp_token->row << ": missing TC_RPAREN, found " << tmp_token->Lexeme << "\n";
+				return -1;
+			}
+		}else{
+			std::cout << "Line " << tmp_token->row << ": missing TC_LPAREN, found " << tmp_token->Lexeme << "\n";
+			return -1;
+	}
+	}else{
+		std::cout << "Line " << tmp_token->row << ": missing function name, found " << tmp_token->Lexeme << "\n";
+		return -1;
+	}
 }
 
 int parse_main(Token *token, struct ast *tree){
@@ -896,10 +977,10 @@ int parse_arg (Token *token, struct ast *tree){
 	tmp_token = token;
 	char *test;
 	switch(tmp_token->TokenClass){
-		case TC_ID:
 		case TC_STRING:
 			node_insert(tree, tmp_token, 9999);
 			return 0;
+		case TC_ID:
 		case TC_NUM:
 		case TC_LPAREN:
 			test = get_current_buf();
@@ -917,7 +998,8 @@ int parse_arg (Token *token, struct ast *tree){
 			ret += parse_num_expr(tmp_token);
 			if (ret != 0)
 				return -1;
-			expr_insert(tree, sendbuf);
+			node_insert(tree, NULL, 0);
+			expr_insert(tree->nodes[tree->nodes.size()-1].ptr_n, sendbuf);
 			return ret;
 		default:
 			std::cout << "Line " << tmp_token->row << ": Error: function argument should be, TC_ID, TC_STRING or TC_NUM this is " << TC_NAMES[tmp_token->TokenClass] << "\n";
@@ -1021,6 +1103,7 @@ int parse_num_expr(Token *token){
 					//move_lex_pos(-1);
 					//return ret;
 				case TC_SEMICOLON:
+				case TC_COMMA:
 					move_lex_pos(-1);
 					/*if(parscore != 0){
 							std::cout << "Line " << tmp_token->row <<
@@ -1048,7 +1131,7 @@ int parse_num_expr(Token *token){
 				default:
 					std::cout << "Line " << tmp_token->row <<
 					": Error: wrong symbol, found "
-					<< TC_NAMES[tmp_token->TokenClass] << ", maybe you missed semicolon or begginning of 'if'/'while' construction?" << "\n";
+					<< TC_NAMES[tmp_token->TokenClass] << ", maybe you missed comma, semicolon or begginning of 'if'/'while' construction?" << "\n";
 					
 					return -1;
 			}

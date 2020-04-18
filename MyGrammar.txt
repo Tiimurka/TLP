@@ -1,11 +1,12 @@
 prog -> pre main
 pre -> pre_part | pre_part pre | eps
-pre_part -> TC_VAR var TC_SEMICOLON
+pre_part -> TC_VAR var TC_SEMICOLON | TC_FUNC decl_func TC_SEMICOLON
 var -> var_ids TC_COLON var_decl
 var_ids -> TC_ID | TC_ID TC_COMMA var_ids
 var_decl -> TC_T_ARRAY decl_array | var_types
-decl_array -> TC_LBRACKET TC_NUM TC_DOUBLEDOT TC_NUM TC_RBRACKET TC_OF var_types
+decl_array -> TC_LBRACKET TC_NUM TC_DOUBLEDOT TC_NUM TC_RBRACKET TC_OF var_types 
 var_types -> TC_T_INT | TC_T_REAL | TC_T_STRING
+func_decl -> TC_FUNC TC_ID TC_LPAREN var TC_RPAREN TC_COLON var_decl TC_SEMICOLON TC_BEGIN f_body TC_END_FUNC
 main -> TC_BEGIN m_cont TC_END_PROG
 m_cont -> sent TC_SEMICOLON | sent TC_SEMICOLON m_cont  | TC_IF if | TC_IF if m_cont
 if -> if_part | if_part TC_ELSE (TC_ID TC_ASSIGN assign | TC_BEGIN f_body TC_END_FUNC) | if_part TC_ELSE TC_IF if_part

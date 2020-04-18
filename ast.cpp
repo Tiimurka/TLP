@@ -24,6 +24,8 @@ struct ast_node *node_create(struct Token *t, struct ast *n){
 }
 
 void node_insert(struct ast *tree, struct Token *t, unsigned int type){
+	//if(type == AST_FUNC)
+		//std::cout << "ALERT\n";
 	struct ast_node *node;
 	if(t == NULL){
 		struct ast *n = ast_create(type);

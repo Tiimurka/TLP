@@ -87,7 +87,7 @@ bool NumCheck(char* lex){
 	return true;
 }
 
-int LexAdd(/*std::vector<Token> &Tokens,*/ char* Lexeme){
+int LexAdd(char* Lexeme){
 	//std::cout << "I am adding lexeme " << Lexeme << ", its strlen is " << std::strlen(Lexeme);
 	//std::printf(", and its sym nums is ");
 	//for(unsigned int i = 0; i < std::strlen(Lexeme); i++)

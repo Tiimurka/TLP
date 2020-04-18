@@ -1,8 +1,15 @@
 var a,b,i : integer;
 
+function test (a, c : real):integer;
+begin
+	a := 2.28;
+	c := 3.22;
+	writeln(a+c);
+end;
+
 begin
 a := ((322+1)*(2*2)) mod (2+3);
-
+b:=0;
 if (a = 0) then
  begin
 	if(b=0) then

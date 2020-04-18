@@ -14,6 +14,7 @@ int parse_ids(Token *token, struct ast *tree);
 int parse_var_decl(Token *token, struct ast *tree);
 int parse_decl_array(Token *token, struct ast *tree);
 int parse_types(Token *token, struct ast *tree);
+int parse_func_decl(Token *token, struct ast *tree);
 int parse_main(Token *token, struct ast *tree);
 int parse_m_cont(Token *token, struct ast *tree);
 int parse_if(Token *token, struct ast *tree);
