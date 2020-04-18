@@ -101,6 +101,21 @@ unsigned int get_type(std::string Lexeme){
 		return 9999;
 }
 
+ bool is_corr_sym (char sym){
+	if(((sym >= 'A' && sym <= 'Z') || (sym >= 'a' && sym <= 'z') || sym == '_') ||
+	(sym == '%' || sym == '&') || (sym >= '0' && sym <= '9'))
+		return true;
+	return false;
+ }
+
+bool is_corr_ending(char sym){
+	while(sym != '+' && sym != '-' && sym != '/' && sym != '*' && sym != '='
+	&& sym != '<' && sym != '>' && sym != ' ' 
+	&& sym != ')' && sym != ';' && sym != ',' && sym != '\0')
+		return true;
+	return false;
+}
+
 void expr_lex (char *buf, std::vector<Token> *Tokens){
 	char str [50];
 	Token t;
@@ -111,9 +126,8 @@ void expr_lex (char *buf, std::vector<Token> *Tokens){
 		i = 0;
 		while(*parse == ' ')
 			parse++;
-		if(((*parse >= 'A' && *parse <= 'Z') || (*parse >= 'a' && *parse <= 'z') || *parse == '_') || (*parse == '%' || *parse == '&')
-			|| (*parse >= '0' && *parse <= '9')){
-			while(*parse != '+' && *parse != '-' && *parse != '/' && *parse != '*' && *parse != '=' && *parse != '<' && *parse != '>' && *parse != ' ' && *parse != ')' && *parse != ';' && *parse != ',' && *parse != '\0'){
+		if(is_corr_sym(*parse)){
+			while(is_corr_ending(*parse)){
 				str[i] = *parse;
 				i++;
 				parse++;

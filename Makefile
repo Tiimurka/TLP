@@ -1,31 +1,24 @@
-all: parse utest_lex utest_parse
+CC=c++
+CFLAGS=-Wall -c
+LDFLAGS=-Wall
+TARGET=parse utest_lex utest_parse
+BUILD_PARSE=build/main.o build/lex.o build/parse.o  build/ast.o
+BUILD_UTEST_LEX=build/utest_lex.o  build/lex.o
+BUILD_UTEST_PARSE=build/utest_parse.o build/lex.o build/parse.o  build/ast.o
 
-parse: build/main.o build/lex.o build/parse.o  build/ast.o
-	c++ -Wall build/main.o build/lex.o build/parse.o  build/ast.o -o parse
+all: $(TARGET)
 
-build/main.o:
-	c++ -Wall -c main.cpp -o build/main.o
+parse: $(BUILD_PARSE)
+	$(CC) $(LDFLAGS) $(BUILD_PARSE) -o parse
 
-build/lex.o:
-	c++ -Wall -c lex.cpp -o build/lex.o
+utest_lex: $(BUILD_UTEST_LEX)
+	$(CC) $(LDFLAGS) $(BUILD_UTEST_LEX) -o utest_lex
 
-build/parse.o:
-	c++ -Wall -c parse.cpp -o build/parse.o
+utest_parse: $(BUILD_UTEST_PARSE)
+	$(CC) $(LDFLAGS) $(BUILD_UTEST_PARSE) -o utest_parse
 
-build/ast.o:
-	c++ -Wall -c ast.cpp -o build/ast.o
-
-utest_lex: build/utest_lex.o  build/lex.o
-	c++ -Wall build/utest_lex.o build/lex.o -o utest_lex
-
-build/utest_lex.o:
-	c++ -Wall -c utest_lex.cpp -o build/utest_lex.o
-
-utest_parse: build/utest_parse.o build/lex.o build/parse.o  build/ast.o
-	c++ -Wall build/utest_parse.o build/lex.o build/parse.o  build/ast.o -o utest_parse
-
-build/utest_parse.o:
-	c++ -Wall -c utest_parse.cpp -o build/utest_parse.o
+build/%.o: %.cpp
+	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf build/*.o parse utest_lex utest_parse
+	rm -rf build/*.o $(TARGET)

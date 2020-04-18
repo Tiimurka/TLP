@@ -2,12 +2,7 @@
 #include "ast.h"
 
 int main(){
-	//std::cout << "hi" << std::endl;
-	//std::cout << TC_NAMES[2] << std::endl;
-	//std::vector<Token> Tokens;
-	//move_lex_pos(1);
-	//move_lex_pos(-1);
-	//Lex("minarray.pas");
+	//std::cout << "hi" << std::endl;	
 	struct ast *tree = parse_test("hello.pas");
 	ast_print(tree, 0);
 	//show_node(tree, 0);
