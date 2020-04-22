@@ -80,19 +80,22 @@ int parse_pre(Token *token, struct ast *tree){
 		move_lex_pos(-5);
 		return ret;
 	}
-	ret += parse_pre_part(tmp_token, tree);
-	if (ret != 0)
-		return -1;
-	tmp_token = GNT();
-	if(tmp_token == NULL)
-		return -1;
-	simskip(&tmp_token);
-	if(tmp_token->TokenClass != TC_BEGIN){
+	while (tmp_token->TokenClass != TC_BEGIN){
 		ret += parse_pre_part(tmp_token, tree);
 		if (ret != 0)
 			return -1;
+		tmp_token = GNT();
+		if(tmp_token == NULL)
+			return -1;
+		simskip(&tmp_token);
 	}
-	else
+	//if(tmp_token->TokenClass != TC_BEGIN){
+		//ret += parse_pre_part(tmp_token, tree);
+		//if (ret != 0)
+			//return -1;
+	//}
+	//else
+	if(tmp_token->TokenClass == TC_BEGIN)
 		move_lex_pos(-5);
 	return ret;
 }
@@ -395,7 +398,7 @@ int parse_main(Token *token, struct ast *tree){
 			}
 			break;
 		default:
-			std::cout << "Line " << tmp_token->row << ": wrong program beginning, found" << tmp_token->Lexeme <<  "\n"; 
+			std::cout << "Line " << tmp_token->row << ": wrong program beginning, found " << tmp_token->Lexeme <<  "\n"; 
 			return -1;
 	}
 	return ret;

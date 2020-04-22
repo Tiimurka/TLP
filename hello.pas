@@ -1,10 +1,17 @@
 var a,b,i : integer;
 
+var t : real;
+
+var r : real;
+
+
+
 function test (a, c : real):integer;
 begin
 	a := 2.28;
 	c := 3.22;
-	writeln(a+c);
+	r :=14.88;
+	writeln(a+c+r);
 end;
 
 begin
