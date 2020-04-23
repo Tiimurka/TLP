@@ -6,12 +6,17 @@ var r : real;
 
 
 
-function test (a, c : real):integer;
+function test1 (a1, c1 : real):integer;
 begin
 	a := 2.28;
 	c := 3.22;
 	r :=14.88;
-	writeln(a+c+r);
+	writeln(a+c+r+4);
+end;
+
+function test2 (a2, c2 : real):integer;
+begin
+	writeln('More tests for the tests god!');
 end;
 
 begin
