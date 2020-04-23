@@ -306,13 +306,18 @@ int parse_func_decl(Token *token, struct ast *tree){
 		if(tmp_token == NULL)
 			return -1;
 		if(tmp_token->TokenClass == TC_LPAREN){
-			node_insert(tree, NULL, AST_VAR);
-			ret+=parse_var(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
-			if (ret != 0)
-				return -1;
+			//!!!
 			tmp_token = GNT();
-			if(tmp_token == NULL)
+			if(tmp_token->TokenClass != TC_RPAREN){
+				move_lex_pos(tmp_token->Lexeme.size() * (-1));
+				node_insert(tree, NULL, AST_VAR);
+				ret+=parse_var(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
+				if (ret != 0)
+					return -1;
+				tmp_token = GNT();
+				if(tmp_token == NULL)
 				return -1;
+			}
 			if(tmp_token->TokenClass == TC_RPAREN){
 				tmp_token = GNT();
 				if(tmp_token == NULL)

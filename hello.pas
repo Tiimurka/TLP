@@ -14,7 +14,7 @@ begin
 	writeln(a+c+r+4);
 end;
 
-function test2 (a2, c2 : real):integer;
+function test2 ():integer;
 begin
 	writeln('More tests for the tests god!');
 end;

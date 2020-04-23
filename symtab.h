@@ -13,6 +13,7 @@ class symtab
 		symtab(struct ast *tree);
 		bool ast_handle(struct ast *tree);
 		void show();
+		unsigned int* get(std::string key);
 };
 
 #endif

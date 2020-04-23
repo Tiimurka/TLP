@@ -8,6 +8,8 @@ int main(){
 	ast_print(tree, 0);
 	symtab s(tree);
 	s.show();
+	unsigned int * arr = s.get("a1");
+	std::cout << "Check: " << arr[0] << " " << arr[1] << "\n";
 	//show_node(tree, 0);
 	//show_node(tree->nodes[0].ptr_n, 1);
 	//show_node(tree->nodes[1].ptr_n, 1);

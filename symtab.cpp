@@ -74,23 +74,25 @@ bool symtab::ast_handle(struct ast *tree){
 						ins1[0] = 0; ins1[1] = 0;
 						//std::cout << "var case, ins1 = " << ins1[0] << " " << ins1[1] << " " << ids->nodes[j].ptr_t->Lexeme << "\n";
 						table.insert(make_pair(ids->nodes[j].ptr_t->Lexeme, ins1)); 
-						//table[ids->nodes[j].ptr_t->Lexeme] = ins1;
 					}
 				}else{
 					std::cout << "Error: no ids in AST_VAR\n";
 					return false;
 				}
 			}else if(node->type == AST_FUNC_DECL){
-				struct ast *decl = node->nodes[0].ptr_n->nodes[0].ptr_n;
-				unsigned int *ins2;
-				for(unsigned int j = 0; j < decl->nodes.size(); j++){
-					//struct ast *ids->nodes[j].ptr_n;
-					ins2 = new unsigned int[2];
-					ins2[0] = 1; ins2[1] = func_count;
-					//std::cout << "func case, ins2 = " << ins2[0] << " " << ins2[1] << " " << decl->nodes[j].ptr_t->Lexeme << "\n";
-					table[decl->nodes[j].ptr_t->Lexeme] = ins2;
+				if(node->nodes[0].ptr_n != NULL && node->nodes[0].ptr_n->type == AST_VAR){
+					//std::cout << "Entering!\n";
+					struct ast *decl = node->nodes[0].ptr_n;
+					decl = decl->nodes[0].ptr_n;
+					unsigned int *ins2;
+					for(unsigned int j = 0; j < decl->nodes.size(); j++){
+						ins2 = new unsigned int[2];
+						ins2[0] = 1; ins2[1] = func_count;
+						//std::cout << "func case, ins2 = " << ins2[0] << " " << ins2[1] << " " << decl->nodes[j].ptr_t->Lexeme << "\n";
+						table[decl->nodes[j].ptr_t->Lexeme] = ins2;
+					}
+					++func_count;
 				}
-				++func_count;
 			}
 		}
 	}
@@ -100,10 +102,15 @@ bool symtab::ast_handle(struct ast *tree){
 void symtab::show(){
 	/*for (auto x : table) 
 		std::cout << x.first << " " << x.second[0] << ", " << x.second[1] << "\n";*/
-	std::unordered_map<std::string, unsigned int*>:: iterator itr; 
-	std::cout << "\nAll Elements : \n"; 
+	std::unordered_map<std::string, unsigned int*>:: iterator itr;  
 	for (itr = table.begin(); itr != table.end(); itr++) 
 	{ 
 		std::cout << itr->first << " " << itr->second[0] << " " << itr->second[1] << "\n"; 
 	}
+}
+
+unsigned int* symtab::get(std::string key){
+	if(table.find(key) == table.end())
+		return NULL;
+	return table.find(key)->second;
 }
