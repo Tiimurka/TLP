@@ -738,11 +738,38 @@ int parse_sent (Token *token, struct ast *tree){
 	tmp_token = token;
 	//tmp_token = GNT();
 	if(tmp_token->TokenClass == TC_ID){
+		bool is_arr = false;
 		struct Token *ptr = tmp_token;
+		struct Token *ind;
 		tmp_token = GNT();
 		if(tmp_token == NULL)
 			return -1;
+		if(tmp_token->TokenClass == TC_LBRACKET){
+			is_arr = true;
+			tmp_token = GNT();
+			if(tmp_token == NULL)
+				return -1;
+			if(tmp_token->TokenClass != TC_ID && tmp_token->TokenClass != TC_NUM){
+				std::cout << "Line " << tmp_token->row << ": wrong index, found "<< tmp_token->Lexeme << "\n";
+				return -1;
+			}
+			ind = tmp_token;
+			tmp_token = GNT();
+			if(tmp_token == NULL)
+				return -1;
+			if(tmp_token->TokenClass != TC_RBRACKET){
+				std::cout << "Line " << tmp_token->row << ": missing TC_RBRACKET, found "<< tmp_token->Lexeme << "\n";
+				return -1;
+			}
+			tmp_token = GNT();
+			if(tmp_token == NULL)
+				return -1;
+		}
 		if(tmp_token->TokenClass == TC_LPAREN){
+			if(is_arr){
+				std::cout << "Line " << tmp_token->row << "array element cannot be name of function\n";
+				return -1;
+			}
 			node_insert(tree, NULL, AST_FUNC);
 			node_insert(tree->nodes[tree->nodes.size()-1].ptr_n, ptr, 9999);
 			tmp_token = GNT();
@@ -764,7 +791,14 @@ int parse_sent (Token *token, struct ast *tree){
 		}else if(tmp_token->TokenClass == TC_ASSIGN){
 			//tmp_token = GNT();
 			node_insert(tree, NULL, AST_ASSIGN);
-			node_insert(tree->nodes[tree->nodes.size()-1].ptr_n, ptr, 9999);
+			if(is_arr){
+				struct ast *ptr1 = tree->nodes[tree->nodes.size()-1].ptr_n;
+				node_insert(ptr1, NULL, AST_ARR);
+				struct ast *ptr2 = ptr1->nodes[ptr1->nodes.size()-1].ptr_n;
+				node_insert(ptr2, ptr, 9999);
+				node_insert(ptr2, ind, 9999);
+			}else
+				node_insert(tree->nodes[tree->nodes.size()-1].ptr_n, ptr, 9999);
 			ret += parse_assign(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
 			if (ret != 0)
 				return -1;
@@ -1001,8 +1035,8 @@ int parse_arg (Token *token, struct ast *tree){
 				sendbuf[i] = *test;
 				++test;
 			}
-			sendbuf[i+1] = *test;
-			sendbuf[i+2] = '\0';
+			//sendbuf[i+1] = *test;
+			sendbuf[i] = '\0';
 			ret += parse_num_expr(tmp_token);
 			if (ret != 0)
 				return -1;
@@ -1098,36 +1132,34 @@ int parse_num_expr(Token *token){
 					tmp_token = GNT();
 					if(tmp_token == NULL)
 						return -1;
-					//if(tmp_token->TokenClass == TC_RPAREN)
-					//break;
-				//case TC_RPAREN:
-				//--parscore;
-					/*if(!islp){
-						std::cout << "Line " << tmp_token->row <<
-						": Error: no paring lparen, entering token is "
-						<< tmp_token->Lexeme << "\n";
+				/*case TC_LBRACKET:
+					//!!!
+					tmp_token = GNT();
+					if(tmp_token == NULL)
 						return -1;
-					}//else islp = false;*/
-					//move_lex_pos(-1);
-					//return ret;
+					if(tmp_token->TokenClass != TC_ID && tmp_token->TokenClass != TC_NUM){
+						std::cout << "Line " << tmp_token->row << ": wrong index, found "<< tmp_token->Lexeme << "\n";
+						return -1;
+					}
+					tmp_token = GNT();
+					if(tmp_token == NULL)
+						return -1;
+					if(tmp_token->TokenClass != TC_RBRACKET){
+						std::cout << "Line " << tmp_token->row << ": missing TC_RBRACKET, found "<< tmp_token->Lexeme << "\n";
+						return -1;
+					}else{
+						tmp_token = GNT();
+						if(tmp_token == NULL)
+							return -1;
+						
+					}*/
 				case TC_SEMICOLON:
 				case TC_COMMA:
 					move_lex_pos(-1);
-					/*if(parscore != 0){
-							std::cout << "Line " << tmp_token->row <<
-							": Error: parentheses error!\n ";
-							return -1;
-					}*/
 					return ret;
 				case TC_THEN:
 					//std::cout << "Current token is " << tmp_token->Lexeme << ", moving back\n";
 					move_lex_pos(-4);
-					/*tmp_token = GNT();
-					while (tmp_token->TokenClass != TC_THEN){
-						move_lex_pos(-1);
-						tmp_token = GNT();
-					}
-					move_lex_pos(-4);*/
 					return ret;
 				case TC_DO:
 				case TC_TO:
@@ -1159,8 +1191,35 @@ int parse_num_fact(Token *token){
 	Token *tmp_token = token;
 	//tmp_token = GNT();
 	switch(tmp_token->TokenClass){
-		case TC_NUM:
 		case TC_ID:
+			tmp_token = GNT();
+			if(tmp_token == NULL)
+				return -1;
+			if(tmp_token->TokenClass == TC_LBRACKET){
+				tmp_token = GNT();
+				if(tmp_token == NULL)
+					return -1;
+				if(tmp_token->TokenClass != TC_ID && tmp_token->TokenClass != TC_NUM){
+					std::cout << "Line " << tmp_token->row << ": wrong index, found "<< tmp_token->Lexeme << "\n";
+					return -1;
+				}
+				tmp_token = GNT();
+				if(tmp_token == NULL)
+					return -1;
+				if(tmp_token->TokenClass != TC_RBRACKET){
+					std::cout << "Line " << tmp_token->row << ": missing TC_RBRACKET, found "<< tmp_token->Lexeme << "\n";
+					return -1;
+				}else{
+					return 0;
+					break;
+				}
+			}else{
+				move_lex_pos(tmp_token->Lexeme.size() * (-1));
+				return 0;
+				break;
+			}
+			break;
+		case TC_NUM:
 			return 0;
 			break;
 		case TC_LPAREN:

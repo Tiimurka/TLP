@@ -4,7 +4,7 @@ var t : real;
 
 var r : real;
 
-
+var arr:array[1..10] of integer;
 
 function test1 (a1, c1 : real):integer;
 begin
@@ -20,7 +20,8 @@ begin
 end;
 
 begin
-a := ((322+1)*(2*2)) mod (2+3);
+arr[7] := ((322+1)*(2*2)) mod (2+3);
+arr[1] := 7*10-arr[7];
 b:=0;
 if (a = 0) then
  begin

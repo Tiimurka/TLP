@@ -18,3 +18,4 @@ arg -> TC_STRING | TC_ID | num_expr
 assign -> TC_ID | num_expr 
 num_expr -> num_fact | num_fact (TC_PLUS | TC_MINUS | TC_ASTER | TC_SLASH | TC_DIV | TC_MOD | TC_ISEQUAL | TC_ISLESS | TC_ISMORE | TC_OR | TC_AND) num_expr
 num_fact -> (NUM | TC_ID) | TC_LPAREN expr TC_RPAREN
+id -> TC_ID | TC_ID TC_LBRACKET TC_ID TC_RBRACKET
