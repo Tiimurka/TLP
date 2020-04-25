@@ -8,10 +8,10 @@ var arr:array[1..10] of integer;
 
 function test1 (a1, c1 : real):integer;
 begin
-	a := 2.28;
-	c := 3.22;
+	a1 := 2.28;
+	c1 := 3.22;
 	r :=14.88;
-	writeln(a+c+r+4);
+	writeln(a1+c1+r+4);
 end;
 
 function test2 ():integer;
@@ -22,7 +22,7 @@ end;
 begin
 arr[7] := ((322+1)*(2*2)) mod (2+3);
 arr[1] := 7*10-arr[7];
-b:=0;
+r:=a+b;
 if (a = 0) then
  begin
 	if(b=0) then

@@ -791,14 +791,16 @@ int parse_sent (Token *token, struct ast *tree){
 		}else if(tmp_token->TokenClass == TC_ASSIGN){
 			//tmp_token = GNT();
 			node_insert(tree, NULL, AST_ASSIGN);
+			struct ast *ptr1 = tree->nodes[tree->nodes.size()-1].ptr_n;
+			node_insert(ptr1, NULL, AST_TYPE_ID);
 			if(is_arr){
-				struct ast *ptr1 = tree->nodes[tree->nodes.size()-1].ptr_n;
-				node_insert(ptr1, NULL, AST_ARR);
 				struct ast *ptr2 = ptr1->nodes[ptr1->nodes.size()-1].ptr_n;
-				node_insert(ptr2, ptr, 9999);
-				node_insert(ptr2, ind, 9999);
+				node_insert(ptr2, NULL, AST_ARR);
+				struct ast *ptr3 = ptr2->nodes[ptr2->nodes.size()-1].ptr_n;
+				node_insert(ptr3, ptr, 9999);
+				node_insert(ptr3, ind, 9999);
 			}else
-				node_insert(tree->nodes[tree->nodes.size()-1].ptr_n, ptr, 9999);
+				node_insert(ptr1->nodes[ptr1->nodes.size()-1].ptr_n, ptr, 9999);
 			ret += parse_assign(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
 			if (ret != 0)
 				return -1;
