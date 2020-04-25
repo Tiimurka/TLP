@@ -1,54 +1,5 @@
 #include "symtab.h"
 
-/*class symtab
-{
-	private:
-		std::unordered_map<std::string, unsigned int*> table;
-	public:
-		symtab(struct ast *tree){
-			bool check = ast_handle(tree);
-			if (check)
-				std::cout << "handling complete!\n";
-		}
-		bool ast_handle(struct ast *tree){
-			if (tree == NULL){
-				std::cout << "Error: tree is not exist\n";
-				return false;
-			}
-			struct ast *ptr = tree->nodes[0].ptr_n;
-			if(ptr->type == AST_PRE){
-				unsigned int func_count = 0;
-				for(unsigned int i = 0; i < ptr->nodes.size(); i++){
-					struct ast *node = ptr->nodes[0].ptr_n;
-					if(node->type == AST_VAR){
-						struct ast *ids = node->nodes[0].ptr_n;
-						if(ids->type == AST_VAR_IDS){
-							for(unsigned int j = 0; j < ids->nodes.size(); j++){
-								unsigned int ins[2] = {0, 0};
-								table[ids->nodes[j].ptr_t->Lexeme] = ins;
-							}
-						}else{
-							std::cout << "Error: no ids in AST_VAR\n";
-							return false;
-						}
-					}else if(node->type == AST_FUNC_DECL){
-						struct ast *ids = node->nodes[0].ptr_n->nodes[0].ptr_n;
-						for(unsigned int j = 0; j < ids->nodes.size(); j++){
-								unsigned int ins[2] = {1, func_count};
-								table[ids->nodes[j].ptr_t->Lexeme] = ins;
-						}
-						++func_count;
-					}
-				}
-			}
-			return true;
-		}
-		void show(){
-			for (auto x : table) 
-				std::cout << x.first << " " << x.second[0] << ", " << x.second[1] << "\n";
-		}
-};*/
-
 symtab::symtab(struct ast *tree){
 			bool check = ast_handle(tree);
 			if (check)
@@ -67,11 +18,20 @@ bool symtab::ast_handle(struct ast *tree){
 			struct ast *node = ptr->nodes[i].ptr_n;
 			if(node->type == AST_VAR){
 				struct ast *ids = node->nodes[0].ptr_n;
-				unsigned int *ins1;
+				struct tabnode *ins1;
 				if(ids->type == AST_VAR_IDS){
 					for(unsigned int j = 0; j < ids->nodes.size(); j++){
-						ins1 = new unsigned int[2];
-						ins1[0] = 0; ins1[1] = 0;
+						ins1 = new struct tabnode;
+						ins1->level = 0; ins1->sublevel = 0; 
+						if(node->nodes[1].type == AST_TYPE_NODE && node->nodes[1].ptr_n->type == AST_DECL_ARRAY){
+							ins1->is_arr = true;
+							ins1->arr_ub = std::atoi(node->nodes[1].ptr_n->nodes[0].ptr_t->Lexeme.c_str());
+							ins1->arr_lb = std::atoi(node->nodes[1].ptr_n->nodes[1].ptr_t->Lexeme.c_str());
+							ins1->type = node->nodes[1].ptr_n->nodes[2].ptr_t->TokenClass;
+						}else{
+							ins1->is_arr = false;
+							ins1->type = ids->nodes[j].ptr_t->TokenClass;
+						}
 						//std::cout << "var case, ins1 = " << ins1[0] << " " << ins1[1] << " " << ids->nodes[j].ptr_t->Lexeme << "\n";
 						table.insert(make_pair(ids->nodes[j].ptr_t->Lexeme, ins1)); 
 					}
@@ -84,10 +44,11 @@ bool symtab::ast_handle(struct ast *tree){
 					//std::cout << "Entering!\n";
 					struct ast *decl = node->nodes[0].ptr_n;
 					decl = decl->nodes[0].ptr_n;
-					unsigned int *ins2;
+					struct tabnode *ins2;
 					for(unsigned int j = 0; j < decl->nodes.size(); j++){
-						ins2 = new unsigned int[2];
-						ins2[0] = 1; ins2[1] = func_count;
+						ins2 = new struct tabnode;
+						ins2->level = 1; ins2->sublevel = func_count;
+						ins2->type = decl->nodes[j].ptr_t->TokenClass;
 						//std::cout << "func case, ins2 = " << ins2[0] << " " << ins2[1] << " " << decl->nodes[j].ptr_t->Lexeme << "\n";
 						table[decl->nodes[j].ptr_t->Lexeme] = ins2;
 					}
@@ -102,14 +63,19 @@ bool symtab::ast_handle(struct ast *tree){
 void symtab::show(){
 	/*for (auto x : table) 
 		std::cout << x.first << " " << x.second[0] << ", " << x.second[1] << "\n";*/
-	std::unordered_map<std::string, unsigned int*>:: iterator itr;  
+	std::unordered_map<std::string, struct tabnode*>:: iterator itr;  
 	for (itr = table.begin(); itr != table.end(); itr++) 
 	{ 
-		std::cout << itr->first << " " << itr->second[0] << " " << itr->second[1] << "\n"; 
+		std::cout << itr->first << " " << itr->second->level << " " << itr->second->sublevel << " " << 
+		TC_NAMES[itr->second->type]; 
+		if(itr->second->is_arr){
+			std::cout << " " << itr->second->arr_ub << " " << itr->second->arr_lb;
+		}
+		std::cout << "\n";
 	}
 }
 
-unsigned int* symtab::get(std::string key){
+struct tabnode* symtab::get(std::string key){
 	if(table.find(key) == table.end())
 		return NULL;
 	return table.find(key)->second;
