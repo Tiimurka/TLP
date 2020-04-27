@@ -1021,11 +1021,12 @@ int parse_arg (Token *token, struct ast *tree){
 	tmp_token = token;
 	char *test;
 	switch(tmp_token->TokenClass){
-		case TC_STRING:
-			node_insert(tree, tmp_token, 9999);
-			return 0;
+		//case TC_STRING:
+			//node_insert(tree, tmp_token, 9999);
+			//return 0;
 		case TC_ID:
 		case TC_NUM:
+		case TC_STRING:
 		case TC_LPAREN:
 			test = get_current_buf();
 			char sendbuf[50];
@@ -1103,6 +1104,7 @@ int parse_num_expr(Token *token){
 		case TC_LPAREN:
 		case TC_NUM:
 		case TC_ID:
+		case TC_STRING:
 			ret += parse_num_fact(tmp_token);
 			if (ret != 0)
 				return -1;
@@ -1222,6 +1224,7 @@ int parse_num_fact(Token *token){
 			}
 			break;
 		case TC_NUM:
+		case TC_STRING:
 			return 0;
 			break;
 		case TC_LPAREN:

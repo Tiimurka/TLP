@@ -1,6 +1,6 @@
-var a,b,i : integer;
+var a,b,i, y, u : integer;
 
-var str : string;
+var str1, str2 : string;
 
 var r : real;
 
@@ -8,10 +8,10 @@ var arr:array[1..10] of integer;
 
 function test1 (a1, c1 : real):integer;
 begin
-	a1 := 2.28;
-	c1 := 3.22;
+	y := 228;
+	u := 322;
 	r :=14.88;
-	writeln(a1+c1+r+4);
+	writeln(a1+c1+r+y+u+4);
 end;
 
 function test2 ():integer;
@@ -22,7 +22,14 @@ end;
 begin
 arr[7] := ((322+1)*(2*2)) mod (2+3);
 arr[1] := 7*10-arr[7];
+a:=arr[7];
+b:=arr[1];
+str1:='test1';
+str2:='test2';
+str1:=str1+str2;
+writeln(str1);
 r:=a+b;
+test1(r, a);
 if (a = 0) then
  begin
 	if(b=0) then

@@ -124,8 +124,9 @@ void expr_lex (char *buf, std::vector<Token> *Tokens){
 	char *parse = buf;
 	int i;
 	int par_pr = 0;
-	bool is_arr = false;
+	bool is_arr = false, is_str = false;
 	while(1){
+		printf("step, %d\n", *parse);
 		i = 0;
 		while(*parse == ' ')
 			parse++;
@@ -151,6 +152,19 @@ void expr_lex (char *buf, std::vector<Token> *Tokens){
 			str[i] = '\0';
 		}else if (*parse == '\0'){
 			break;
+		}else if (*parse == '\''){
+			do{
+				//std::cout << *parse << "\n";
+				str[i] = *parse;
+				++parse; ++i;
+			}while(*parse != '\'');
+			str[i] = *parse;
+			i++;
+			str[i] = '\0';
+			is_str = true;
+			i++;
+			std::cout << str << "\n";
+			parse++;
 		}else{
 			if(*parse == '<' && *(parse+1) == '>'){
 				str[i] = *parse;
@@ -167,6 +181,9 @@ void expr_lex (char *buf, std::vector<Token> *Tokens){
 		if(is_arr){
 			check = TC_ARR;
 			is_arr = false;
+		}else if(is_str){
+			check = TC_STRING;
+			is_str = false;
 		}
 		else
 			check = LexAdd(str);
@@ -178,7 +195,7 @@ void expr_lex (char *buf, std::vector<Token> *Tokens){
 		}else if(check == TC_RPAREN){
 			--par_pr;
 		}else{
-			//std::cout << "adding token " << str << "\n";
+			std::cout << "adding token " << str << "\n";
 			t.TokenClass = check;
 			t.Lexeme = str;
 			t.row = get_prior(check, par_pr);
@@ -226,7 +243,7 @@ void arr_ins (struct ast *tree, std::string ustr){
 }
 
 void ex_node_handler(struct ast *tree, Token t){
-	if(t.TokenClass != TC_NUM){
+	if(t.TokenClass == TC_ID || t.TokenClass == TC_ARR){
 			node_insert(tree, NULL, AST_TYPE_ID);
 			struct ast *ptr1 = tree->nodes[tree->nodes.size()-1].ptr_n;
 			if(t.TokenClass == TC_ARR)
@@ -308,12 +325,12 @@ void ex_ins_rec(struct ast *tree, std::vector<Token> vec){
 }
 
 void expr_insert(struct ast *tree, char *expr){
-	//std::cout << "Hi! I am adding expr: " << expr << "\n";
+	std::cout << "Hi! I am adding expr: " << expr << "\n";
 	std::vector<struct Token> Tokens;
 	expr_lex(expr, &Tokens);
 	if(Tokens.size() == 1){
-		if(Tokens[0].TokenClass == TC_NUM || Tokens[0].TokenClass == TC_ID || Tokens[0].TokenClass == TC_ARR){
-			//std::cout << "There is only one token! Changing node type!\n";
+		//if(Tokens[0].TokenClass == TC_NUM || Tokens[0].TokenClass == TC_ID || Tokens[0].TokenClass == TC_ARR){
+			std::cout << "There is only one token! Changing node type!\n";
 			if(Tokens[0].TokenClass == TC_NUM){
 				tree->type = AST_TYPE_NUM;
 				node_insert(tree, &(Tokens[0]), 9999);
@@ -323,14 +340,17 @@ void expr_insert(struct ast *tree, char *expr){
 			}else if(Tokens[0].TokenClass == TC_ARR){
 				tree->type = AST_TYPE_ID;
 				arr_ins (tree, Tokens[0].Lexeme);
+			}else if(Tokens[0].TokenClass == TC_STRING){
+				tree->type = AST_TYPE_STRING;
+				node_insert(tree, &(Tokens[0]), 9999);
 			}
 			return;
-		}
+		//}
 	}
-	//for(unsigned int i = 0; i < Tokens.size(); i++){
-		//std::cout << Tokens[i].row << " " << TC_NAMES[Tokens[i].TokenClass] << " " << Tokens[i].Lexeme << std::endl;
-	//}
-	//std::cout << "\n";
+	/*for(unsigned int i = 0; i < Tokens.size(); i++){
+		std::cout << Tokens[i].row << " " << TC_NAMES[Tokens[i].TokenClass] << " " << Tokens[i].Lexeme << std::endl;
+	}
+	std::cout << "\n";*/
 	ex_ins_rec(tree, Tokens);
 }
 
