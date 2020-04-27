@@ -30,7 +30,7 @@ bool symtab::ast_handle(struct ast *tree){
 							ins1->type = node->nodes[1].ptr_n->nodes[2].ptr_t->TokenClass;
 						}else{
 							ins1->is_arr = false;
-							ins1->type = ids->nodes[j].ptr_t->TokenClass;
+							ins1->type = node->nodes[1].ptr_t->TokenClass;
 						}
 						//std::cout << "var case, ins1 = " << ins1[0] << " " << ins1[1] << " " << ids->nodes[j].ptr_t->Lexeme << "\n";
 						table.insert(make_pair(ids->nodes[j].ptr_t->Lexeme, ins1)); 
@@ -42,15 +42,15 @@ bool symtab::ast_handle(struct ast *tree){
 			}else if(node->type == AST_FUNC_DECL){
 				if(node->nodes[0].ptr_n != NULL && node->nodes[0].ptr_n->type == AST_VAR){
 					//std::cout << "Entering!\n";
-					struct ast *decl = node->nodes[0].ptr_n;
-					decl = decl->nodes[0].ptr_n;
+					struct ast *decl1 = node->nodes[0].ptr_n;
+					struct ast *decl2 = decl1->nodes[0].ptr_n;
 					struct tabnode *ins2;
-					for(unsigned int j = 0; j < decl->nodes.size(); j++){
+					for(unsigned int j = 0; j < decl2->nodes.size(); j++){
 						ins2 = new struct tabnode;
 						ins2->level = 1; ins2->sublevel = func_count;
-						ins2->type = decl->nodes[j].ptr_t->TokenClass;
+						ins2->type = decl1->nodes[1].ptr_t->TokenClass;
 						//std::cout << "func case, ins2 = " << ins2[0] << " " << ins2[1] << " " << decl->nodes[j].ptr_t->Lexeme << "\n";
-						table[decl->nodes[j].ptr_t->Lexeme] = ins2;
+						table[decl2->nodes[j].ptr_t->Lexeme] = ins2;
 					}
 					++func_count;
 				}

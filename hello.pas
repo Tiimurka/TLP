@@ -1,6 +1,6 @@
 var a,b,i : integer;
 
-var t : real;
+var str : string;
 
 var r : real;
 
