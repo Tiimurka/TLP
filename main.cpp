@@ -1,5 +1,6 @@
 #include "parse.h"
 #include "ast.h"
+#include "sem.h"
 #include "symtab.h"
 
 int main(){
@@ -8,8 +9,12 @@ int main(){
 	ast_print(tree, 0);
 	symtab s(tree);
 	s.show();
-	struct tabnode* n = s.get("a1");
-	std::cout << "Check: " << n->level << " " << n->sublevel << "\n";
+	struct tabnode* n = s.get("a8");
+	if (n == NULL)
+		std::cout << "var not found\n";
+	else
+		std::cout << "Check: " << n->level << " " << n->sublevel << "\n";
+	sem_analyzer(tree, &s);
 	//show_node(tree, 0);
 	//show_node(tree->nodes[0].ptr_n, 1);
 	//show_node(tree->nodes[1].ptr_n, 1);

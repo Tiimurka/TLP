@@ -1,8 +1,6 @@
 #include "parse.h"
 
 std::ifstream fin;
-//struct ast *tree;
-//struct ast *ptr;
 
 struct Token *GNT (){
 	Token *t;
@@ -1047,10 +1045,17 @@ int parse_arg (Token *token, struct ast *tree){
 			expr_insert(tree->nodes[tree->nodes.size()-1].ptr_n, sendbuf);
 			return ret;
 		default:
-			std::cout << "Line " << tmp_token->row << ": Error: function argument should be, TC_ID, TC_STRING or TC_NUM this is " << TC_NAMES[tmp_token->TokenClass] << "\n";
+			std::cout << "Line " << tmp_token->row << ": Error: function argument should be, TC_ID, TC_STRING or TC_NUM this is " 
+			<< TC_NAMES[tmp_token->TokenClass] << "\n";
 			return -1;
 	}
 	return ret;
+}
+
+bool is_do(char *pos){
+	if(*(pos+1) == 'd' && *(pos+2) == 'o')
+		return false;
+	return true;
 }
 
 int parse_assign(Token *token, struct ast *tree){
@@ -1059,7 +1064,7 @@ int parse_assign(Token *token, struct ast *tree){
 	char *test = get_current_buf();
 	char sendbuf[50];
 	int i = 0;
-	for(;(*test != '\0') && (*(test+1) != 'd' && *(test+2) != 'o'); i++){
+	for(;(*test != '\0') && is_do(test); i++){
 		sendbuf[i] = *test;
 		++test;
 	}
@@ -1105,6 +1110,7 @@ int parse_num_expr(Token *token){
 		case TC_NUM:
 		case TC_ID:
 		case TC_STRING:
+		case TC_MINUS:
 			ret += parse_num_fact(tmp_token);
 			if (ret != 0)
 				return -1;
@@ -1194,6 +1200,11 @@ int parse_num_fact(Token *token){
 	int ret = 0;
 	Token *tmp_token = token;
 	//tmp_token = GNT();
+	if(tmp_token->TokenClass == TC_MINUS){
+		tmp_token = GNT();
+		if(tmp_token == NULL)
+			return -1;
+	}
 	switch(tmp_token->TokenClass){
 		case TC_ID:
 			tmp_token = GNT();

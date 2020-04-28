@@ -5,22 +5,46 @@ static unsigned int current_row;
 static char buf[150];
 static char str1[150];
 
+bool MinusHandler(char *pos){
+	if(*pos != '-')
+		return false;
+	if(*pos == '-' && current_col == 0)
+		return false;
+	unsigned int b = 1;
+	while(*(pos-b) == ' ')
+		b++;
+	unsigned int f = 1;
+	while(*(pos+f) == ' ')
+		f++;
+	//std::cout << "pos = " << *pos << ", b = " << b << " , pos-b = " << *(pos-b)<<", f = " << f << " , pos+f = " << *(pos+f)<<"\n";
+	if((*(pos+f) >= 'A' && *(pos+f) <= 'Z') || (*(pos+f) >= 'a' && *(pos+f) <= 'z') || *(pos+f) == '-')
+		return true;
+	if(*pos == '-' && (((*(pos-b) >= 'A' && *(pos-b) <= 'Z') || (*(pos-b) >= 'a' && *(pos-b) <= 'z') || *(pos-b) == '_' || *(pos-b) == ']'
+		|| (*(pos-b) >= '0' && *(pos-b) <= '9') || *(pos-b) == '=' ) || *(pos-b) == ')'))
+		return true;
+	//std::cout << "MH returning false!\n";
+	return false;
+}
+
 char ModSetter(char *pos, char mode){
 	//std::cout << "zaz" << std::endl;
+	char ret = MODE_OTHER;
+	//printf("pos = %c, mode = %d\n", *pos, mode);
 	if (mode == MODE_OTHER){
 		if ((*pos == '/' && *(pos+1) == '/') || (*pos == '{'))
-			return MODE_COMMENT;
+			ret = MODE_COMMENT;
 		else if ((*pos == ':' && *(pos+1) == '=') || (*pos == '<' && *(pos+1) == '>') || (*pos == '.' && *(pos+1) == '.'))
-			return MODE_SYM2;
+			ret = MODE_SYM2;
 		else if(*pos == '(' || *pos == ')' || *pos == '[' || *pos == ']' || *pos == ':' || *pos == ';' || *pos == ',' 
-		|| *pos == '+' || *pos == '-' || *pos == '*' || *pos == '/' || *pos == '<' || *pos == '>' || *pos == '=' )
-			return MODE_SYM1;
+		|| *pos == '+' || (MinusHandler(pos) == true) || *pos == '*' || *pos == '/' || *pos == '<' || *pos == '>' || *pos == '=' )
+			ret = MODE_SYM1;
 		else if (*pos == '\'')
-			return MODE_STRING;
+			ret = MODE_STRING;
 		else
-			return MODE_OTHER;
+			ret = MODE_OTHER;
 	}
-	return MODE_OTHER;
+	//printf("ret = %d\n", ret);
+	return ret;
 }
 
 bool IdCheck(char* lex){
@@ -88,14 +112,15 @@ bool NumCheck(char* lex){
 }
 
 int LexAdd(char* Lexeme){
-	std::cout << "I am adding lexeme " << Lexeme << ", its strlen is " << std::strlen(Lexeme);
-	std::printf(", and its sym nums is ");
-	for(unsigned int i = 0; i < std::strlen(Lexeme); i++)
-		printf("%d, ", Lexeme[i]);
-	printf("\n");
+	//std::cout << "I am adding lexeme " << Lexeme << ", its strlen is " << std::strlen(Lexeme);
+	//std::printf(", and its sym nums is ");
+	//for(unsigned int i = 0; i < std::strlen(Lexeme); i++)
+		//printf("%d, ", Lexeme[i]);
+	//printf("\n");
 	int check;
-	
-	if (std::strcmp(Lexeme, "var") == 0)
+	if(*Lexeme == '\0')
+		check = TC_FINAL;
+	else if (std::strcmp(Lexeme, "var") == 0)
 		check = TC_VAR;
 	else if(std::strcmp(Lexeme, "integer") == 0)
 		check = TC_T_INT;
@@ -365,8 +390,10 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 						j = 0;
 						isFirst = false;
 					}
+					//std::cout << "current *parse is " << *parse << "\n";
 					str1[j] = *parse;
 					if((ModSetter(parse+1, MODE_OTHER) != MODE_OTHER) || *(parse+1) == '\0' || *(parse+1) == ' ' || *(parse+1) == 9 || *(parse+1) == 13){
+						//std::cout << "current token is " << *parse << "\n";
 						current_col++;
 						str1[j+1] = '\0';
 						t->TokenClass = LexAdd(str1);

@@ -4,7 +4,7 @@ var str1, str2 : string;
 
 var r : real;
 
-var arr:array[1..10] of integer;
+var arr:array[-11..10] of integer;
 
 function test1 (a1, c1 : real):integer;
 begin
@@ -20,15 +20,15 @@ begin
 end;
 
 begin
-arr[7] := ((322+1)*(2*2)) mod (2+3);
-arr[1] := 7*10-arr[7];
-a:=arr[7];
-b:=arr[1];
-str1:='test1';
-str2:='test2';
-str1:=str1+str2;
-writeln(str1);
-r:=a+b;
+arr[7] := ((322+1)*(3*2)) mod (2+3);
+arr[1] := 7*10--arr[7];
+a:=arr[7]--7;
+b:=5*-a;
+//str1:='test1';
+//str2:='test2';
+//str1:=str1+str2;
+writeln(a);
+//r:=-a;
 test1(r, a);
 if (a = 0) then
  begin
