@@ -5,17 +5,17 @@
 #include "ast.h"
 
 TEST_CASE ("parse_test1", "check_goodvar"){
-	struct ast *tree = parse_test("hello.pas");
+	struct ast *tree = parse_test("nod.pas");
 	REQUIRE(tree != NULL);
 	REQUIRE(tree->type == AST_PROG);
 	REQUIRE(tree->nodes[0].ptr_n->type == AST_PRE);
 	REQUIRE(tree->nodes[1].ptr_n->type == AST_MAIN);
 	struct ast *ptr = tree->nodes[1].ptr_n;
 	REQUIRE(ptr->nodes[0].ptr_n->type == AST_ASSIGN);
-	REQUIRE(ptr->nodes[1].ptr_n->type == AST_CHOICE);
-	REQUIRE(ptr->nodes[2].ptr_n->type == AST_REPUN);
-	REQUIRE(ptr->nodes[3].ptr_n->type == AST_WHILE);
-	REQUIRE(ptr->nodes[4].ptr_n->type == AST_FOR);
+	REQUIRE(ptr->nodes[1].ptr_n->type == AST_FUNC);
+	REQUIRE(ptr->nodes[2].ptr_n->type == AST_FUNC);
+	REQUIRE(ptr->nodes[3].ptr_n->type == AST_FUNC);
+	REQUIRE(ptr->nodes[4].ptr_n->type == AST_REPUN);
 }
 
 TEST_CASE ("parse_test2", "check_lexerr"){

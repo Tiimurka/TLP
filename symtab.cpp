@@ -55,6 +55,7 @@ bool symtab::ast_handle(struct ast *tree){
 							ins2 = new struct tabnode;
 							ins2->level = 1; ins2->sublevel = func_count;
 							ins2->type = decl1->nodes[1].ptr_t->TokenClass;
+							ins2->is_arr = false;
 							//std::cout << "func case, ins2 = " << ins2[0] << " " << ins2[1] << " " << decl->nodes[j].ptr_t->Lexeme << "\n";
 							table[decl2->nodes[j].ptr_t->Lexeme] = ins2;
 						}else{

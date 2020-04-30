@@ -5,7 +5,7 @@
 
 int main(){
 	//std::cout << "hi" << std::endl;	
-	struct ast *tree = parse_test("hello.pas");
+	struct ast *tree = parse_test("nod.pas");
 	ast_print(tree, 0);
 	symtab s(tree);
 	s.show();

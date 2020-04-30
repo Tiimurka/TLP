@@ -1,8 +1,19 @@
 var 
 	k, l, n: integer;
-	
+
+var arr:array[-11..10] of integer;
+
 var
 	c:real;
+	
+function test1 (a1, c1 : real):integer;
+begin
+	k := 228;
+	l := 322;
+	n :=  14;
+	writeln(a1+c1+k+l+n+4);
+end;
+	
  
 {keklol}
 begin

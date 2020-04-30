@@ -430,6 +430,7 @@ bool Lex(const char *filename){
 		if(t->TokenClass == TC_FINAL)
 			break;
 	}
+	fin.close();
 	return true;
 }
 

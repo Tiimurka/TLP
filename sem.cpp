@@ -155,7 +155,7 @@ bool checkTypeForBinop(unsigned int type, int ret1, int ret2){
 
 int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublevel){
 	//std::cout << "Entering sem_expr, type = "<< AST_NAMES[tree->type] <<"\n";
-	int ret, ret1, ret2;
+	int ret1, ret2;
 	if(isBinop(tree->nodes[0].ptr_n))
 		ret1 = sem_expr(tree->nodes[0].ptr_n, curr_level, curr_sublevel);
 	else if(tree->nodes[0].ptr_n != NULL && tree->nodes[0].ptr_n->type == AST_TYPE_ID)
@@ -263,6 +263,6 @@ struct ast * sem_analyzer(struct ast *tree, class symtab *t){
 	}
 	else{
 		std::cout << "Your semantycs isn't awesome. Try again\n";
-		return tree;
+		return NULL;
 	}
 }
