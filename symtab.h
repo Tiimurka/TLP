@@ -10,8 +10,8 @@ struct tabnode {
 	unsigned int sublevel;
 	unsigned int type;
 	bool is_arr;
-	unsigned int arr_ub;
-	unsigned int arr_lb;
+	float arr_ub;
+	float arr_lb;
 };
 
 class symtab

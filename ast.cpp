@@ -139,6 +139,15 @@ bool is_corr_ending(char *sym){
 	return false;
 }
 
+bool is_f_sym_is_num(char *sym){
+	unsigned int f = 1;
+	while(*(sym+f) == ' ')
+		f++;
+	if(*(sym+f) >= '0' && *(sym+f) <= '9')
+		return true;
+	return false;
+}
+
 void expr_lex (char *buf, std::vector<Token> *Tokens){
 	char str [50];
 	Token t;
@@ -153,9 +162,12 @@ void expr_lex (char *buf, std::vector<Token> *Tokens){
 			parse++;
 		if(is_corr_sym(parse, Tokens)){
 			if(*parse == '-'){
-				//str[i] = *parse;
-				//i++;
-				is_wm = true;
+				if(is_f_sym_is_num(parse) == false)
+					is_wm = true;
+				else{
+					str[i] = *parse;
+					i++;
+				}
 				parse++;
 			}
 			while(is_corr_ending(parse)){

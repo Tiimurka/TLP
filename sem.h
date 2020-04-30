@@ -4,7 +4,7 @@
 #include "ast.h" 
 #include "symtab.h"
 
-enum SEM {SEM_DEFAULT = 0};
+enum SEM {SEM_DEFAULT = 0, SEM_EXPR};
 
 //const char* const SEM_NAMES[] = {"SEM_DEFAULT"};
 

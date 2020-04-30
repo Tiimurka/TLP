@@ -22,8 +22,9 @@ end;
 begin
 arr[7] := ((322+1)*(3*2)) mod (2+3);
 arr[1] := 7*10--arr[7];
-a:=arr[7]--7;
+a:=arr[9]--7;
 b:=5*-a;
+r := 10/a;
 //str1:='test1';
 //str2:='test2';
 //str1:=str1+str2;
@@ -32,7 +33,7 @@ writeln(a);
 test1(r, a);
 if (a = 0) then
  begin
-	if(b=0) then
+	if(b=0) then 
 		b := 1;
 	writeln('kek');
 	

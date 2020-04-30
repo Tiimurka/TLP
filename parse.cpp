@@ -599,11 +599,51 @@ int parse_if_part(Token *token, struct ast *tree){
 			return -1;
 		simskip(&tmp_token);
 		if(tmp_token->TokenClass == TC_ID){
+			bool is_arr = false;
+				struct Token *idptr = tmp_token;
+				struct Token *ind;
 				tmp_token = GNT();
 				if(tmp_token == NULL)
 					return -1;
+				
+				
+				if(tmp_token->TokenClass == TC_LBRACKET){
+					is_arr = true;
+					tmp_token = GNT();
+					if(tmp_token == NULL)
+						return -1;
+					if(tmp_token->TokenClass != TC_ID && tmp_token->TokenClass != TC_NUM){
+						std::cout << "Line " << tmp_token->row << ": wrong index, found "<< tmp_token->Lexeme << "\n";
+						return -1;
+					}
+					ind = tmp_token;
+					tmp_token = GNT();
+					if(tmp_token == NULL)
+						return -1;
+					if(tmp_token->TokenClass != TC_RBRACKET){
+						std::cout << "Line " << tmp_token->row << ": missing TC_RBRACKET, found "<< tmp_token->Lexeme << "\n";
+						return -1;
+					}
+					tmp_token = GNT();
+					if(tmp_token == NULL)
+						return -1;
+				}
+				
+				
 				if(tmp_token->TokenClass == TC_ASSIGN){
 					node_insert(tree, NULL, AST_ASSIGN);
+					struct ast *ptr1 = tree->nodes[tree->nodes.size()-1].ptr_n;
+					node_insert(ptr1, NULL, AST_TYPE_ID);
+					if(is_arr){
+						struct ast *ptr2 = ptr1->nodes[ptr1->nodes.size()-1].ptr_n;
+						node_insert(ptr2, NULL, AST_ARR);
+						struct ast *ptr3 = ptr2->nodes[ptr2->nodes.size()-1].ptr_n;
+						node_insert(ptr3, idptr, 9999);
+						node_insert(ptr3, ind, 9999);
+					}else
+						node_insert(ptr1->nodes[ptr1->nodes.size()-1].ptr_n, idptr, 9999);
+				
+				
 					ret += parse_assign(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
 					if (ret != 0)
 						return -1;
@@ -915,10 +955,16 @@ int parse_sent (Token *token, struct ast *tree){
 			tmp_token = GNT();
 			if(tmp_token == NULL)
 				return -1;
+			if(tmp_token->TokenClass == TC_LBRACKET){
+				std::cout << "Line " << tmp_token->row << "Error : arrays cannot be used as counters\n";
+				return -1;
+			}
 			if(tmp_token->TokenClass == TC_ASSIGN){
 				//tmp_token = GNT();
 				node_insert(ptr, NULL, AST_ASSIGN);
-				node_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, idptr, 9999);
+				node_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, NULL, AST_TYPE_ID);
+				struct ast *fp = ptr->nodes[ptr->nodes.size()-1].ptr_n;
+				node_insert(fp->nodes[fp->nodes.size()-1].ptr_n, idptr, 9999);
 				ret += parse_assign(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
 				if (ret != 0)
 					return -1;

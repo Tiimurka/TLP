@@ -26,8 +26,8 @@ bool symtab::ast_handle(struct ast *tree){
 							ins1->level = 0; ins1->sublevel = 0; 
 							if(node->nodes[1].type == AST_TYPE_NODE && node->nodes[1].ptr_n->type == AST_DECL_ARRAY){
 								ins1->is_arr = true;
-								ins1->arr_ub = std::atoi(node->nodes[1].ptr_n->nodes[0].ptr_t->Lexeme.c_str());
-								ins1->arr_lb = std::atoi(node->nodes[1].ptr_n->nodes[1].ptr_t->Lexeme.c_str());
+								ins1->arr_ub = std::atof(node->nodes[1].ptr_n->nodes[0].ptr_t->Lexeme.c_str());
+								ins1->arr_lb = std::atof(node->nodes[1].ptr_n->nodes[1].ptr_t->Lexeme.c_str());
 								ins1->type = node->nodes[1].ptr_n->nodes[2].ptr_t->TokenClass;
 							}else{
 								ins1->is_arr = false;
