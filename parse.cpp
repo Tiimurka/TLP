@@ -54,6 +54,7 @@ struct ast *parse_test(const char *filename, bool isdt){
 	struct ast *tree = ast_create(AST_PROG);
 	result += parse_prog(t, tree);
 	//std::cout << "result: " << result << "\n"; 
+	fin.close();
 	if(is_dump_tokens)
 		DT(GT);
 	if(result == 0){
