@@ -35,7 +35,7 @@ void DT (std::vector<struct Token> T){
 	for(unsigned int i = 0; i < T.size(); i++)
 		//std::cout << T[i].row << " " << TC_NAMES[T[i].TokenClass] << " " << T[i].Lexeme << std::endl;
 		std::cout << "Loc=<" << T[i].row<<":"<<T[i].col<<"> "
-		<< TC_NAMES[T[i].TokenClass] << "'" << T[i].Lexeme << "'\n";
+		<< TC_NAMES[T[i].TokenClass] << " '" << T[i].Lexeme << "'\n";
 }
 
 struct ast *parse_test(const char *filename, bool isdt){
