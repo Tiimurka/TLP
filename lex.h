@@ -31,6 +31,7 @@ const char* const TC_NAMES[] = {"TC_UNKNOWN", "TC_VAR", "TC_T_INT", "TC_T_REAL",
 struct Token {
 	int TokenClass;
 	unsigned int row;
+	unsigned int col;
 	std::string Lexeme;
 };
 

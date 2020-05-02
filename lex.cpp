@@ -258,15 +258,18 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 		//std::cout << "Current buf (mode = " << mode << "): " << buf << std::endl;
 		//fin >> buf;
 		if(buf[current_col] == '\0'){
+			unsigned int prev_col = current_col;
 			current_col = 0;
 			++current_row;
 			if(!(fin->getline(buf, 150))){
 				t->TokenClass = TC_FINAL;
 				t->row = current_row-1;
+				t->col = prev_col;
 				t->Lexeme = "\0";
 			}else{
 				t->TokenClass = TC_ENDLINE;
 				t->row = current_row-1;
+				t->col = prev_col;
 				t->Lexeme = "\0";
 			}
 			return t;
@@ -302,6 +305,7 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 						current_col++;
 						t->TokenClass = TC_COMMENT;
 						t->row = current_row;
+						t->col = current_col;
 						t->Lexeme = str1;
 						return t;
 						//mode = MODE_OTHER;
@@ -330,6 +334,7 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 					current_col++;
 					t->TokenClass = LexAdd(str1);
 					t->row = current_row;
+					t->col = current_col;
 					t->Lexeme = str1;
 					return t;
 						//if(!check)
@@ -341,6 +346,7 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 					current_col++;
 					t->TokenClass = LexAdd(str1);
 					t->row = current_row;
+					t->col = current_col;
 					t->Lexeme = str1;
 					return t;
 					//bool check;
@@ -366,6 +372,7 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 					current_col++;
 					t->TokenClass = TC_STRING;
 					t->row = current_row;
+					t->col = current_col;
 					t->Lexeme = str1;
 					return t;
 					//LexAddString(Tokens, str1, true);
@@ -378,6 +385,7 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 						current_col++;
 						t->TokenClass = TC_UNKNOWN;
 						t->row = current_row;
+						t->col = current_col;
 						t->Lexeme = str1;
 						return t;
 						//LexAddString(Tokens, str1, false);
@@ -398,6 +406,7 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 						str1[j+1] = '\0';
 						t->TokenClass = LexAdd(str1);
 						t->row = current_row;
+						t->col = current_col;
 						t->Lexeme = str1;
 						return t;
 						//LexAdd(Tokens, str1);
