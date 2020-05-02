@@ -34,6 +34,8 @@ struct Token {
 	std::string Lexeme;
 };
 
+unsigned int get_curr_row();
+unsigned int get_curr_col();
 char ModSetter(char *pos, char mode);
 bool IdCheck(char* lex);
 bool NumCheck(char* lex);

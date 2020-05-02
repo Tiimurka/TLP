@@ -6,7 +6,7 @@
 #include "ast.h"
 
 TEST_CASE ("symtab","check_get"){
-	struct ast *tree = parse_test("nod.pas");
+	struct ast *tree = parse_test("nod.pas", false);
 	symtab s(tree);
 	struct tabnode* n1 = s.get("k");
 	REQUIRE(n1 != NULL);

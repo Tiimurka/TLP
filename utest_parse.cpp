@@ -5,7 +5,7 @@
 #include "ast.h"
 
 TEST_CASE ("parse_test1", "check_goodvar"){
-	struct ast *tree = parse_test("nod.pas");
+	struct ast *tree = parse_test("nod.pas", false);
 	REQUIRE(tree != NULL);
 	REQUIRE(tree->type == AST_PROG);
 	REQUIRE(tree->nodes[0].ptr_n->type == AST_PRE);
@@ -19,12 +19,12 @@ TEST_CASE ("parse_test1", "check_goodvar"){
 }
 
 TEST_CASE ("parse_test2", "check_lexerr"){
-	struct ast *tree = parse_test("lexerr.pas");
+	struct ast *tree = parse_test("lexerr.pas", false);
 	REQUIRE(tree == NULL);
 }
 
 TEST_CASE ("parse_test3", "check_synterr"){
-	struct ast *tree = parse_test("synterr.pas");
+	struct ast *tree = parse_test("synterr.pas", false);
 	REQUIRE(tree == NULL);
 }
 

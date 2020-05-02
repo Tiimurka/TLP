@@ -419,6 +419,14 @@ char* get_current_buf(){
 	return p;
 }
 
+unsigned int get_curr_row(){
+	return current_row;
+}
+
+unsigned int get_curr_col(){
+	return current_col;
+}
+
 bool Lex(const char *filename){
 	std::ifstream fin;
 	fin.open(filename);

@@ -2,9 +2,28 @@
 
 std::ifstream fin;
 
+bool is_dump_tokens;
+
+std::vector <struct Token> GT;
+
+unsigned int prev_col;
+
+bool is_corr_t(struct Token *t){
+	if(GT.size() == 1)
+		return true;
+	if(get_curr_col() == prev_col)
+		return false;
+	return true;
+}
+
 struct Token *GNT (){
 	Token *t;
 	t = GetNextToken(&fin);
+	if(is_dump_tokens){
+		if(is_corr_t(t))
+			GT.push_back(*t);
+	}
+	prev_col = get_curr_col();
 	if(t->TokenClass == TC_UNKNOWN){
 		std::cout << "Line " << t->row << ": lexical error, found " << t->Lexeme <<"\n"; 
 		return NULL;
@@ -12,9 +31,15 @@ struct Token *GNT (){
 	return t;
 }
 
-struct ast *parse_test(const char *filename){
+void DT (std::vector<struct Token> T){
+	for(unsigned int i = 0; i < T.size(); i++)
+		std::cout << T[i].row << " " << TC_NAMES[T[i].TokenClass] << " " << T[i].Lexeme << std::endl;
+}
+
+struct ast *parse_test(const char *filename, bool isdt){
 	//std::cout << "I am entering parse_test!\n"; 
 	fin.open(filename);
+	is_dump_tokens = isdt;
 	LexInit(&fin);
 	Token *t;
 	int result = 0;
@@ -27,6 +52,8 @@ struct ast *parse_test(const char *filename){
 	struct ast *tree = ast_create(AST_PROG);
 	result += parse_prog(t, tree);
 	//std::cout << "result: " << result << "\n"; 
+	if(is_dump_tokens)
+		DT(GT);
 	if(result == 0){
 		std::cout << "Your program is awesome!\n";
 		return tree;

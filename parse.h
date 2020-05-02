@@ -5,7 +5,10 @@
 #include "lex.h"
 #include "ast.h"
 
-struct ast *parse_test(const char *filename);
+
+void DT (std::vector<struct Token> T);
+
+struct ast *parse_test(const char *filename, bool isdt);
 int parse_prog(Token *token, struct ast *tree);
 int parse_pre(Token *token, struct ast *tree);
 int parse_pre_part(Token *token, struct ast *tree);
