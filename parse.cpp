@@ -242,11 +242,9 @@ int parse_var_decl(Token *token, struct ast *tree){
 	return ret;
 }
 
-int parse_decl_array(Token *token, struct ast *tree){
-	//std::cout << "I am entering parse_decl_array, current token is " << token->Lexeme << "\n"; 
+int check_decl_array(Token *token, struct ast *tree){
 	int ret = 0;
-	Token *tmp_token = token;;
-	//tmp_token = GNT();
+	Token *tmp_token = token;
 	if(tmp_token->TokenClass == TC_LBRACKET){
 		tmp_token = GNT();
 		if(tmp_token == NULL)
@@ -270,12 +268,12 @@ int parse_decl_array(Token *token, struct ast *tree){
 						if(tmp_token == NULL)
 							return -1;
 						if(tmp_token->TokenClass == TC_OF){
-							tmp_token = GNT();
+							/*tmp_token = GNT();
 							if(tmp_token == NULL)
 								return -1;
 							ret+=parse_types(tmp_token, tree);
 							if (ret != 0)
-								return -1;
+								return -1;*/
 						}else{
 							std::cout << "Line " << tmp_token->row << ": missing TC_OF, found " << tmp_token->Lexeme << "\n";
 							return -1;
@@ -303,6 +301,20 @@ int parse_decl_array(Token *token, struct ast *tree){
 	return ret;
 }
 
+int parse_decl_array(Token *token, struct ast *tree){
+	//std::cout << "I am entering parse_decl_array, current token is " << token->Lexeme << "\n"; 
+	int ret = 0;
+	Token *tmp_token = token;
+	check_decl_array(tmp_token, tree);
+	tmp_token = GNT();
+	if(tmp_token == NULL)
+		return -1;
+	ret+=parse_types(tmp_token, tree);
+	if (ret != 0)
+		return -1;
+	return ret;
+}
+
 int parse_types(Token *token, struct ast *tree){
 	//std::cout << "I am entering parse_types, current token is " << token->Lexeme << "\n"; 
 	int ret = 0;
@@ -322,8 +334,7 @@ int parse_types(Token *token, struct ast *tree){
 	return ret;
 }
 
-int parse_func_decl(Token *token, struct ast *tree){
-	//std::cout << "I am entering parse_func, current token is " << token->Lexeme << "\n";
+int check_func_decl(Token *token, struct ast *tree){
 	int ret = 0;
 	Token *tmp_token;
 	tmp_token = GNT();
@@ -334,7 +345,6 @@ int parse_func_decl(Token *token, struct ast *tree){
 		if(tmp_token == NULL)
 			return -1;
 		if(tmp_token->TokenClass == TC_LPAREN){
-			//!!!
 			tmp_token = GNT();
 			if(tmp_token->TokenClass != TC_RPAREN){
 				move_lex_pos(tmp_token->Lexeme.size() * (-1));
@@ -344,7 +354,7 @@ int parse_func_decl(Token *token, struct ast *tree){
 					return -1;
 				tmp_token = GNT();
 				if(tmp_token == NULL)
-				return -1;
+					return -1;
 			}
 			if(tmp_token->TokenClass == TC_RPAREN){
 				tmp_token = GNT();
@@ -361,7 +371,7 @@ int parse_func_decl(Token *token, struct ast *tree){
 							return -1;
 						simskip(&tmp_token);
 						if(tmp_token->TokenClass == TC_BEGIN){
-							tmp_token = GNT();
+							/*tmp_token = GNT();
 							if(tmp_token == NULL)
 								return -1;
 							node_insert(tree, NULL, AST_F_BODY);
@@ -376,7 +386,7 @@ int parse_func_decl(Token *token, struct ast *tree){
 							}else{
 								std::cout << "Line " << tmp_token->row << ": missing function ending, found " << tmp_token->Lexeme << "\n";
 								return -1;
-							}
+							}*/
 						}else{
 							std::cout << "Line " << tmp_token->row << ": missing beginning of the function, found " << tmp_token->Lexeme << "\n";
 							return -1;
@@ -396,11 +406,36 @@ int parse_func_decl(Token *token, struct ast *tree){
 		}else{
 			std::cout << "Line " << tmp_token->row << ": missing TC_LPAREN, found " << tmp_token->Lexeme << "\n";
 			return -1;
-	}
+		}
 	}else{
 		std::cout << "Line " << tmp_token->row << ": missing function name, found " << tmp_token->Lexeme << "\n";
 		return -1;
 	}
+	return ret;
+}
+
+int parse_func_decl(Token *token, struct ast *tree){
+	//std::cout << "I am entering parse_func, current token is " << token->Lexeme << "\n";
+	int ret = 0;
+	Token *tmp_token = token;
+	check_func_decl(tmp_token, tree);
+	tmp_token = GNT();
+	if(tmp_token == NULL)
+		return -1;
+	node_insert(tree, NULL, AST_F_BODY);
+	ret+=parse_f_body(tmp_token, tree->nodes[tree->nodes.size()-1].ptr_n);
+	if (ret != 0)
+		return -1;
+	tmp_token = GNT();
+	if(tmp_token == NULL)
+		return -1;
+	if(tmp_token->TokenClass == TC_END_FUNC){
+		return ret;
+	}else{
+		std::cout << "Line " << tmp_token->row << ": missing function ending, found " << tmp_token->Lexeme << "\n";
+		return -1;
+	}
+	return ret;
 }
 
 int parse_main(Token *token, struct ast *tree){
@@ -635,8 +670,6 @@ int parse_if_part(Token *token, struct ast *tree){
 				tmp_token = GNT();
 				if(tmp_token == NULL)
 					return -1;
-				
-				
 				if(tmp_token->TokenClass == TC_LBRACKET){
 					is_arr = true;
 					tmp_token = GNT();
@@ -658,8 +691,6 @@ int parse_if_part(Token *token, struct ast *tree){
 					if(tmp_token == NULL)
 						return -1;
 				}
-				
-				
 				if(tmp_token->TokenClass == TC_ASSIGN){
 					node_insert(tree, NULL, AST_ASSIGN);
 					struct ast *ptr1 = tree->nodes[tree->nodes.size()-1].ptr_n;
@@ -799,14 +830,197 @@ int parse_f_body(Token *token, struct ast *tree){
 	return ret;
 }
 
-int parse_sent (Token *token, struct ast *tree){
-	//std::cout << "I am entering parse_sent, current token is " << token->Lexeme << "\n";
+int parse_repun(Token *token, struct ast *tree){
 	int ret = 0;
 	Token *tmp_token;
-	tmp_token = token;
-	//tmp_token = GNT();
-	if(tmp_token->TokenClass == TC_ID){
-		bool is_arr = false;
+	tmp_token = GNT();
+		if(tmp_token == NULL)
+			return -1;
+		node_insert(tree, NULL, AST_REPUN);
+		struct ast *ptr = tree->nodes[tree->nodes.size()-1].ptr_n;
+		tmp_token = GNT();
+		if(tmp_token == NULL)
+			return -1;
+		node_insert(ptr, NULL, AST_F_BODY);
+		ret+=parse_f_body(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
+		
+		if (ret != 0)
+			return -1;
+		//std::cout << "Current TC (in repun, before moving) is " << tmp_token->Lexeme << " on row " << tmp_token->row << "\n";
+		move_lex_pos(-5);
+		//std::cout << "test1\n"; 
+		tmp_token = GNT();
+		//std::cout << "test2\n"; 
+		if(tmp_token == NULL)
+			return -1;
+		if(tmp_token->TokenClass == TC_UNTIL){
+			//std::cout << "test3\n";
+			char *test = get_current_buf();
+			tmp_token = GNT();
+			if(tmp_token == NULL)
+				return -1;
+			
+			//std::cout << "buf = " << test << "\n";
+			ret+=parse_num_expr(tmp_token);
+				if (ret != 0)
+					return -1;
+			node_insert(ptr, NULL, 0);
+			expr_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, test);
+			return ret;
+		}else{
+			std::cout << "Line " << tmp_token->row << ": Error: wrong ending of repeat-until construction, found "<< tmp_token->Lexeme << "\n";
+		}
+		return ret;
+}
+
+int parse_while(Token *token, struct ast *tree){
+	int ret = 0;
+	Token *tmp_token;
+	node_insert(tree, NULL, AST_WHILE);
+		struct ast *ptr = tree->nodes[tree->nodes.size()-1].ptr_n;
+		char *test = get_current_buf();
+		//std::cout << "buf = " << test << "\n";
+		char sendbuf[50];
+		int i = 0;
+		for(;(*test != '\0') && (*(test+1) != 'd' && *(test+2) != 'o'); i++){
+			sendbuf[i] = *test;
+			++test;
+		}
+		sendbuf[i] = ';';
+		sendbuf[i+1] = '\0';
+		//std::cout << "sendbuf = " << test << "\n";
+		tmp_token = GNT();
+		if(tmp_token == NULL)
+			return -1;
+		ret+=parse_num_expr(tmp_token);
+		if (ret != 0)
+			return -1;
+		node_insert(ptr, NULL, 0);
+		expr_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, sendbuf);
+		tmp_token = GNT();
+		if(tmp_token == NULL)
+			return -1;
+		if(tmp_token->TokenClass == TC_DO){
+			tmp_token = GNT();
+			if(tmp_token == NULL)
+				return -1;
+			simskip(&tmp_token);
+			if(tmp_token->TokenClass == TC_BEGIN){
+				tmp_token = GNT();
+				if(tmp_token == NULL)
+					return -1;
+				node_insert(ptr, NULL, AST_F_BODY);
+				ret+=parse_f_body(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
+				if (ret != 0)
+					return -1;
+				tmp_token = GNT();
+				if(tmp_token == NULL)
+					return -1;
+				if(tmp_token->TokenClass == TC_END_FUNC){
+					return ret;
+				}
+			}else{
+				std::cout << "Line " << tmp_token->row <<
+				": Error: missing 'begin', found "
+				<< TC_NAMES[tmp_token->TokenClass] << "\n";
+				return -1;
+			}
+		}else{
+			std::cout << "Line " << tmp_token->row <<
+			": Error: missing 'do', found "
+			<< TC_NAMES[tmp_token->TokenClass] << "\n";
+			return -1;
+		}
+		return ret;
+}
+
+int parse_for(Token *token, struct ast *tree){
+	int ret = 0;
+	Token *tmp_token;
+	node_insert(tree, NULL, AST_FOR);
+		struct ast *ptr = tree->nodes[tree->nodes.size()-1].ptr_n;
+		tmp_token = GNT();
+		if(tmp_token == NULL)
+			return -1;
+		if(tmp_token->TokenClass == TC_ID){
+			struct Token *idptr = tmp_token;
+			tmp_token = GNT();
+			if(tmp_token == NULL)
+				return -1;
+			if(tmp_token->TokenClass == TC_LBRACKET){
+				std::cout << "Line " << tmp_token->row << "Error : arrays cannot be used as counters\n";
+				return -1;
+			}
+			if(tmp_token->TokenClass == TC_ASSIGN){
+				//tmp_token = GNT();
+				
+				node_insert(ptr, NULL, AST_ASSIGN);
+				node_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, NULL, AST_TYPE_ID);
+				struct ast *fp = ptr->nodes[ptr->nodes.size()-1].ptr_n;
+				node_insert(fp->nodes[fp->nodes.size()-1].ptr_n, idptr, 9999);
+				ret += parse_assign(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
+				if (ret != 0)
+					return -1;
+				tmp_token = GNT();
+				if(tmp_token == NULL)
+					return -1;
+				if(tmp_token->TokenClass == TC_TO || tmp_token->TokenClass == TC_DOWNTO){
+					node_insert(ptr, tmp_token, 9999);
+					ret += parse_assign(tmp_token, ptr);
+					if (ret != 0)
+						return -1;
+					tmp_token = GNT();
+					if(tmp_token == NULL)
+						return -1;
+					if(tmp_token->TokenClass == TC_DO){
+						tmp_token = GNT();
+						if(tmp_token == NULL)
+						return -1;
+						simskip(&tmp_token);
+						if(tmp_token->TokenClass == TC_BEGIN){
+							tmp_token = GNT();
+							if(tmp_token == NULL)
+								return -1;
+							simskip(&tmp_token);
+							node_insert(ptr, NULL, AST_F_BODY);
+							ret+=parse_f_body(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
+							if (ret != 0)
+								return -1;
+							tmp_token = GNT();
+							if(tmp_token == NULL)
+								return -1;
+							if(tmp_token->TokenClass == TC_END_FUNC){
+								return ret;
+							}
+						}else{
+						std::cout << "Line " << tmp_token->row <<
+						": Error: missing 'begin', found "
+						<< TC_NAMES[tmp_token->TokenClass] << "\n";
+						return -1;
+						}
+					}else{
+						std::cout << "Line " << tmp_token->row << ": missing TC_DO, found "<< tmp_token->Lexeme << "\n";
+						return -1;
+					}
+				}else{
+					std::cout << "Line " << tmp_token->row << ": missing TC_TO or TC_DOWNTO, found "<< tmp_token->Lexeme << "\n";
+					return -1;
+				}
+			}else{
+				std::cout << "Line " << tmp_token->row << ": wrong beginning of function or assignment, found "<< tmp_token->Lexeme << "\n";
+				return -1;
+			}
+		}else{
+			std::cout << "Line " << tmp_token->row << ": missing TC_ID after 'for', found "<< tmp_token->Lexeme << "\n";
+			return -1;
+		}
+		return ret;
+}
+
+int parse_op(Token *token, struct ast *tree){
+	int ret = 0;
+	Token *tmp_token = token;
+	bool is_arr = false;
 		struct Token *ptr = tmp_token;
 		struct Token *ind;
 		tmp_token = GNT();
@@ -876,181 +1090,28 @@ int parse_sent (Token *token, struct ast *tree){
 			std::cout << "Line " << tmp_token->row << ": wrong beginning of function or assignment, found "<< tmp_token->Lexeme << "\n";
 			return -1;
 		}
+		return ret;
+}
+
+int parse_sent (Token *token, struct ast *tree){
+	//std::cout << "I am entering parse_sent, current token is " << token->Lexeme << "\n";
+	int ret = 0;
+	Token *tmp_token;
+	tmp_token = token;
+	//tmp_token = GNT();
+	if(tmp_token->TokenClass == TC_ID){
+		parse_op(tmp_token, tree);
 	}else if(tmp_token->TokenClass == TC_REPEAT){
 		//std::cout << "Starting RepUn!\n";
-		tmp_token = GNT();
-		if(tmp_token == NULL)
-			return -1;
-		node_insert(tree, NULL, AST_REPUN);
-		struct ast *ptr = tree->nodes[tree->nodes.size()-1].ptr_n;
-		tmp_token = GNT();
-		if(tmp_token == NULL)
-			return -1;
-		node_insert(ptr, NULL, AST_F_BODY);
-		ret+=parse_f_body(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
-		
-		if (ret != 0)
-			return -1;
-		//std::cout << "Current TC (in repun, before moving) is " << tmp_token->Lexeme << " on row " << tmp_token->row << "\n";
-		move_lex_pos(-5);
-		//std::cout << "test1\n"; 
-		tmp_token = GNT();
-		//std::cout << "test2\n"; 
-		if(tmp_token == NULL)
-			return -1;
-		if(tmp_token->TokenClass == TC_UNTIL){
-			//std::cout << "test3\n";
-			char *test = get_current_buf();
-			tmp_token = GNT();
-			if(tmp_token == NULL)
-				return -1;
-			
-			//std::cout << "buf = " << test << "\n";
-			ret+=parse_num_expr(tmp_token);
-				if (ret != 0)
-					return -1;
-			node_insert(ptr, NULL, 0);
-			expr_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, test);
-			return ret;
-		}else{
-			std::cout << "Line " << tmp_token->row << ": Error: wrong ending of repeat-until construction, found "<< tmp_token->Lexeme << "\n";
-		}
+		parse_repun(tmp_token, tree);
 	}else if (tmp_token->TokenClass == TC_WHILE){
 		//std::cout << "Starting 'while'!\n";
-		node_insert(tree, NULL, AST_WHILE);
-		struct ast *ptr = tree->nodes[tree->nodes.size()-1].ptr_n;
-		char *test = get_current_buf();
-		//std::cout << "buf = " << test << "\n";
-		char sendbuf[50];
-		int i = 0;
-		for(;(*test != '\0') && (*(test+1) != 'd' && *(test+2) != 'o'); i++){
-			sendbuf[i] = *test;
-			++test;
-		}
-		sendbuf[i] = ';';
-		sendbuf[i+1] = '\0';
-		//std::cout << "sendbuf = " << test << "\n";
-		tmp_token = GNT();
-		if(tmp_token == NULL)
-			return -1;
-		ret+=parse_num_expr(tmp_token);
-		if (ret != 0)
-			return -1;
-		node_insert(ptr, NULL, 0);
-		expr_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, sendbuf);
-		tmp_token = GNT();
-		if(tmp_token == NULL)
-			return -1;
-		if(tmp_token->TokenClass == TC_DO){
-			tmp_token = GNT();
-			if(tmp_token == NULL)
-				return -1;
-			simskip(&tmp_token);
-			if(tmp_token->TokenClass == TC_BEGIN){
-				tmp_token = GNT();
-				if(tmp_token == NULL)
-					return -1;
-				node_insert(ptr, NULL, AST_F_BODY);
-				ret+=parse_f_body(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
-				if (ret != 0)
-					return -1;
-				tmp_token = GNT();
-				if(tmp_token == NULL)
-					return -1;
-				if(tmp_token->TokenClass == TC_END_FUNC){
-					return ret;
-				}
-			}else{
-				std::cout << "Line " << tmp_token->row <<
-				": Error: missing 'begin', found "
-				<< TC_NAMES[tmp_token->TokenClass] << "\n";
-				return -1;
-			}
-		}else{
-			std::cout << "Line " << tmp_token->row <<
-			": Error: missing 'do', found "
-			<< TC_NAMES[tmp_token->TokenClass] << "\n";
-			return -1;
-		}
-		
+		parse_while(tmp_token, tree);
 	}else if(tmp_token->TokenClass == TC_FOR){
 		//std::cout << "Starting 'while'!\n";
-		node_insert(tree, NULL, AST_FOR);
-		struct ast *ptr = tree->nodes[tree->nodes.size()-1].ptr_n;
-		tmp_token = GNT();
-		if(tmp_token == NULL)
-			return -1;
-		if(tmp_token->TokenClass == TC_ID){
-			struct Token *idptr = tmp_token;
-			tmp_token = GNT();
-			if(tmp_token == NULL)
-				return -1;
-			if(tmp_token->TokenClass == TC_LBRACKET){
-				std::cout << "Line " << tmp_token->row << "Error : arrays cannot be used as counters\n";
-				return -1;
-			}
-			if(tmp_token->TokenClass == TC_ASSIGN){
-				//tmp_token = GNT();
-				node_insert(ptr, NULL, AST_ASSIGN);
-				node_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, NULL, AST_TYPE_ID);
-				struct ast *fp = ptr->nodes[ptr->nodes.size()-1].ptr_n;
-				node_insert(fp->nodes[fp->nodes.size()-1].ptr_n, idptr, 9999);
-				ret += parse_assign(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
-				if (ret != 0)
-					return -1;
-				tmp_token = GNT();
-				if(tmp_token == NULL)
-					return -1;
-				if(tmp_token->TokenClass == TC_TO || tmp_token->TokenClass == TC_DOWNTO){
-					node_insert(ptr, tmp_token, 9999);
-					ret += parse_assign(tmp_token, ptr);
-					if (ret != 0)
-						return -1;
-					tmp_token = GNT();
-					if(tmp_token == NULL)
-						return -1;
-					if(tmp_token->TokenClass == TC_DO){
-						tmp_token = GNT();
-						if(tmp_token == NULL)
-						return -1;
-						simskip(&tmp_token);
-						if(tmp_token->TokenClass == TC_BEGIN){
-							tmp_token = GNT();
-							if(tmp_token == NULL)
-								return -1;
-							simskip(&tmp_token);
-							node_insert(ptr, NULL, AST_F_BODY);
-							ret+=parse_f_body(tmp_token, ptr->nodes[ptr->nodes.size()-1].ptr_n);
-							if (ret != 0)
-								return -1;
-							tmp_token = GNT();
-							if(tmp_token == NULL)
-								return -1;
-							if(tmp_token->TokenClass == TC_END_FUNC){
-								return ret;
-							}
-						}else{
-						std::cout << "Line " << tmp_token->row <<
-						": Error: missing 'begin', found "
-						<< TC_NAMES[tmp_token->TokenClass] << "\n";
-						return -1;
-						}
-					}else{
-						std::cout << "Line " << tmp_token->row << ": missing TC_DO, found "<< tmp_token->Lexeme << "\n";
-						return -1;
-					}
-				}else{
-					std::cout << "Line " << tmp_token->row << ": missing TC_TO or TC_DOWNTO, found "<< tmp_token->Lexeme << "\n";
-					return -1;
-				}
-			}else{
-				std::cout << "Line " << tmp_token->row << ": wrong beginning of function or assignment, found "<< tmp_token->Lexeme << "\n";
-				return -1;
-			}
-		}else{
-			std::cout << "Line " << tmp_token->row << ": missing TC_ID after 'for', found "<< tmp_token->Lexeme << "\n";
-			return -1;
-		}
+		parse_for(tmp_token, tree);
+		
+		
 	}else{
 		std::cout << "Line " << tmp_token->row <<
 			": Error: missing id, found "

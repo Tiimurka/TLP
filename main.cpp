@@ -17,7 +17,7 @@ bool is_pas(std::string str){
 }
 
 int main(int argc, char *argv[]){
-	bool is_dump_tokens = false, is_dump_ast = false, is_fn_set = false;
+	bool is_dump_tokens = false, is_dump_ast = false, is_dump_symtab = false, is_fn_set = false;
 	std::string str = "hello.pas";
 	if(argc != 1){
 		for(int i = 1; i < argc; i++){
@@ -26,6 +26,13 @@ int main(int argc, char *argv[]){
 					is_dump_tokens = true;
 				else{
 					std::cout << "Error: multiple command '--dump-tokens'\n";
+					return -1;
+				}
+			}else if(std::strcmp(argv[i], "--dump-symtab") == 0){
+				if(!is_dump_symtab)
+					is_dump_symtab = true;
+				else{
+					std::cout << "Error: multiple command '--dump-symtab'\n";
 					return -1;
 				}
 			}else if(std::strcmp(argv[i], "--dump-ast") == 0){
@@ -56,7 +63,8 @@ int main(int argc, char *argv[]){
 	if(is_dump_ast)
 		ast_print(tree, 0);
 	symtab s(tree);
-	//s.show();
+	if(is_dump_symtab)
+		s.show();
 	//struct tabnode* n = s.get("a8");
 	//if (n == NULL)
 		//std::cout << "var not found\n";
