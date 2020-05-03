@@ -1,7 +1,7 @@
 #include "sem.h"
 
 class symtab *tab;
-
+//unsigned int row;
 //unsigned int curr_level;
 //unsigned int curr_sublevel;
 
@@ -57,6 +57,7 @@ int sem_id(struct ast *tree, unsigned int flag, unsigned int curr_level, unsigne
 				return -1;
 			}
 		}
+		//row = t->row;
 		if(n == NULL)
 			std::cout << "azazaz\n";
 		if(n->level > curr_level){
@@ -195,6 +196,7 @@ int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsign
 	unsigned int flg = flag;
 	int ret = 0;
 	unsigned int i = 0;
+	//unsigned int row;
 	int ret2;
 	int type;
 	if(tree->type == AST_DECL_ARRAY){
@@ -221,6 +223,7 @@ int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsign
 		}else if(isBinop(tree->nodes[1].ptr_n) == false){
 			ret2 = TypeHandler(tree->nodes[1].ptr_n->nodes[0].ptr_t);
 		}
+		// row = assign->nodes[0].ptr_t->row;
 		flg = SEM_EXPR;
 		i++;
 	}
@@ -242,9 +245,11 @@ int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsign
 		if(ret2 < 0)
 			return -1;
 		//}
+		//if(ret2 > 0)
+			//std::cout << TC_NAMES[ret2] << "\n";
 		if(tree->type == AST_ASSIGN){
 			if(!AssignCheck(type, ret2)){
-				std::cout << "Error: " << TC_NAMES[ret2] << " cannot be assigned to " <<
+				std::cout <<"Line "<< tree->row <<" Error: " << TC_NAMES[ret2] << "cannot be assigned to " <<
 				TC_NAMES[type] << "\n";
 				return -1;
 			}

@@ -955,6 +955,7 @@ int parse_for(Token *token, struct ast *tree){
 				//tmp_token = GNT();
 				
 				node_insert(ptr, NULL, AST_ASSIGN);
+				
 				node_insert(ptr->nodes[ptr->nodes.size()-1].ptr_n, NULL, AST_TYPE_ID);
 				struct ast *fp = ptr->nodes[ptr->nodes.size()-1].ptr_n;
 				node_insert(fp->nodes[fp->nodes.size()-1].ptr_n, idptr, 9999);
@@ -1022,6 +1023,7 @@ int parse_op(Token *token, struct ast *tree){
 	Token *tmp_token = token;
 	bool is_arr = false;
 		struct Token *ptr = tmp_token;
+		unsigned int row = tmp_token->row;
 		struct Token *ind;
 		tmp_token = GNT();
 		if(tmp_token == NULL)
@@ -1074,6 +1076,7 @@ int parse_op(Token *token, struct ast *tree){
 			//tmp_token = GNT();
 			node_insert(tree, NULL, AST_ASSIGN);
 			struct ast *ptr1 = tree->nodes[tree->nodes.size()-1].ptr_n;
+			ptr1->row = row;
 			node_insert(ptr1, NULL, AST_TYPE_ID);
 			if(is_arr){
 				struct ast *ptr2 = ptr1->nodes[ptr1->nodes.size()-1].ptr_n;

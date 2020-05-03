@@ -21,6 +21,7 @@ const char* const AST_NAMES[] = {"AST_PROG", "AST_PRE", "AST_VAR", "AST_VAR_IDS"
 
 struct ast{
 	unsigned int type;
+	unsigned int row;
 	std::vector<struct ast_node> nodes;
 };
 
