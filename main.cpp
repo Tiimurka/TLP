@@ -2,13 +2,9 @@
 #include "ast.h"
 #include "sem.h"
 #include "symtab.h"
+#include "codegen.h"
 
 bool is_pas(std::string str){
-	//std::cout << str.size() << "\n";
-	//std::cout << str[str.size()-4] << "\n";
-	//std::cout << str[str.size()-3] << "\n";
-	//std::cout << str[str.size()-2] << "\n";
-	//std::cout << str[str.size()-1] << "\n";
 	if(str.size() < 5)
 		return false;
 	if(str[str.size()-4] == '.' && str[str.size()-3] == 'p' && str[str.size()-2] == 'a' && str[str.size()-1] == 's')
@@ -18,7 +14,7 @@ bool is_pas(std::string str){
 
 int main(int argc, char *argv[]){
 	bool is_dump_tokens = false, is_dump_ast = false, is_dump_symtab = false, is_fn_set = false;
-	std::string str = "hello.pas";
+	std::string str = "asmtest.pas";
 	if(argc != 1){
 		for(int i = 1; i < argc; i++){
 			if(std::strcmp(argv[i], "--dump-tokens") == 0){
@@ -71,6 +67,7 @@ int main(int argc, char *argv[]){
 	//else
 		//std::cout << "Check: " << n->level << " " << n->sublevel << "\n";
 	sem_analyzer(tree, &s);
+	codegen(tree, &s);
 	//show_node(tree, 0);
 	//show_node(tree->nodes[0].ptr_n, 1);
 	//show_node(tree->nodes[1].ptr_n, 1);

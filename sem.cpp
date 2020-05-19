@@ -1,9 +1,6 @@
 #include "sem.h"
 
 class symtab *tab;
-//unsigned int row;
-//unsigned int curr_level;
-//unsigned int curr_sublevel;
 
 int sem_id(struct ast *tree, unsigned int flag, unsigned int curr_level, unsigned int curr_sublevel){
 	//std::cout << "Entering sem_id, "<< AST_NAMES[tree->type] <<"\n";

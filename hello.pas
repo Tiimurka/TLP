@@ -23,7 +23,7 @@ begin
 arr[7] := ((322+1)*(3*2)) mod (2+3);
 arr[1] := 7*10--arr[7];
 a:=arr[9]--7;
-b:=5.1*-a;
+b:=5*-a;
 //str1 := 10/a;
 //str1:='test1';
 //str2:='test2';
@@ -40,7 +40,7 @@ if (a = 0) then
 end
 else if (a < 1) then
 begin
-	writeln('lol');
+	writeln(a+2);
 	b := 3;
 end
 else
