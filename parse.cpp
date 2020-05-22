@@ -1169,12 +1169,20 @@ int parse_arg (Token *token, struct ast *tree){
 			test = get_current_buf();
 			char sendbuf[50];
 			int i;
+			int parencounter;
+			parencounter = 1;
 			for(i = 0; tmp_token->Lexeme[i] != '\0'; i++){
 				sendbuf[i] = tmp_token->Lexeme[i];
 			}
-			for(; (*test != '\0' && *test != ',' && *test != ')'); i++){
-				sendbuf[i] = *test;
-				++test;
+			for(; (*test != '\0' && *test != ',' && parencounter != 0); i++){
+				if(*test == ')')
+					--parencounter;
+				if(*test == ')')
+					++parencounter;
+				if(parencounter != 0){
+					sendbuf[i] = *test;
+					++test;
+				}
 			}
 			//sendbuf[i+1] = *test;
 			sendbuf[i] = '\0';

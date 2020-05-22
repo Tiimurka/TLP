@@ -13,7 +13,7 @@ bool is_pas(std::string str){
 }
 
 int main(int argc, char *argv[]){
-	bool is_dump_tokens = false, is_dump_ast = false, is_dump_symtab = false, is_fn_set = false;
+	bool is_dump_tokens = false, is_dump_ast = false, is_dump_symtab = false, is_dump_asm = false, is_fn_set = false;
 	std::string str = "asmtest.pas";
 	if(argc != 1){
 		for(int i = 1; i < argc; i++){
@@ -36,6 +36,13 @@ int main(int argc, char *argv[]){
 					is_dump_ast = true;
 				else{
 					std::cout << "Error: multiple command '--dump-ast'\n";
+					return -1;
+				}
+			}else if(std::strcmp(argv[i], "--dump-asm") == 0){
+				if(!is_dump_asm)
+					is_dump_asm = true;
+				else{
+					std::cout << "Error: multiple command '--dump-asm'\n";
 					return -1;
 				}
 			}else {
@@ -67,7 +74,8 @@ int main(int argc, char *argv[]){
 	//else
 		//std::cout << "Check: " << n->level << " " << n->sublevel << "\n";
 	sem_analyzer(tree, &s);
-	codegen(tree, &s);
+	if(is_dump_asm)
+		codegen(tree, &s);
 	//show_node(tree, 0);
 	//show_node(tree->nodes[0].ptr_n, 1);
 	//show_node(tree->nodes[1].ptr_n, 1);
