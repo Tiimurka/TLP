@@ -504,7 +504,12 @@ int parse_m_cont(Token *token, struct ast *tree){
 				return -1;
 		}
 	}else{
-	
+		
+		if(tmp_token->TokenClass == TC_END_PROG){
+				move_lex_pos(-4);
+				return ret;
+		}
+		
 		ret += parse_sent(tmp_token, tree);
 		if (ret != 0)
 			return -1;

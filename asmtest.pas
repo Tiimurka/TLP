@@ -25,4 +25,19 @@ begin
 	writeln('TESTING ARRAY ARITHMETICS: ', arr[0] + arr[1] + arr[2] + arr[3] + arr[4]+a);
 	a:= a+4;
 	writeln('a = ', a);
+	
+	write('TESTING IF/ELSE CONSTRUCTION: ');
+	if (a > 100) then
+	 begin
+		writeln('VAR A IS BIGGER THAN 100');
+	end
+	else if (a = 100) then
+	begin
+		writeln('VAR A IS EQUAL 100');
+	end
+	else
+	begin
+		writeln('VAR A LESS THAN 100');
+	end;
+	//writeln ('Hello World!');
 end.
