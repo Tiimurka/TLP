@@ -6,5 +6,6 @@
 #include <fstream>
 
 int codegen(struct ast *tree, class symtab *t);
+int gen_main(struct ast *tree);
 
 #endif

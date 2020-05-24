@@ -91,6 +91,8 @@ unsigned int get_type(std::string Lexeme){
 		return AST_BINOP_MOD;
 	else if (std::strcmp(str, "=") == 0)
 		return AST_LOGIC_ISEQUAL;
+	else if (std::strcmp(str, "<>") == 0)
+		return AST_LOGIC_ISNOTEQUAL;
 	else if (std::strcmp(str, "<") == 0)
 		return AST_LOGIC_ISLESS;
 	else if (std::strcmp(str, ">") == 0)
@@ -209,6 +211,7 @@ void expr_lex (char *buf, std::vector<Token> *Tokens){
 				str[i] = *parse;
 				str[i+1] = *(parse+1);
 				str[i+2] = '\0';
+				parse+=2;
 			}else{
 				//std::cout << "hmm\n";
 				str[i] = *parse;

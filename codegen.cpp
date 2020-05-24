@@ -5,6 +5,7 @@ std::vector <std::string> asm_text;
 //std::vector <struct Token> p_notation;
 
 unsigned int fnum;
+unsigned int bnum;
 class symtab *gtab;
 bool is_pr_created;
 //bool pr_num;
@@ -402,12 +403,167 @@ int gen_assign(struct ast *tree){
 	return 0;
 }
 
+int is_logic(unsigned int type){
+	switch (type){
+		case AST_LOGIC_ISEQUAL:
+			return 1;
+		case AST_LOGIC_ISNOTEQUAL:
+			return 2;
+		case AST_LOGIC_ISLESS:
+			return 3;
+		case AST_LOGIC_ISMORE:
+			return 4;
+	}
+	return 0;
+}
+
+int gen_if(struct ast *tree, unsigned int cb, bool is_print_next){
+	std::string vec_str[4];
+	std::string str1;
+	if(cb != 0){
+		str1.append("C");
+		str1.append(std::to_string(bnum));
+		str1.append("_");
+		str1.append(std::to_string(cb));
+		str1.append(":");
+		asm_text.push_back(str1);
+		str1.clear();
+	}
+	int i = 0;
+	int check = is_logic(tree->nodes[0].ptr_n->type);
+	struct ast *cond = tree->nodes[0].ptr_n;
+	if(cond->nodes[1].type == AST_TYPE_NODE && cond->nodes[1].ptr_n->type == AST_TYPE_ID){
+		if(cond->nodes[1].ptr_n->nodes[0].type == AST_TYPE_NODE){
+			//std::cout << "tr1arr1\n";
+			vec_str[i].append("movl $");
+			vec_str[i].append(cond->nodes[1].ptr_n->nodes[0].ptr_n->nodes[1].ptr_t->Lexeme);
+			vec_str[i].append(", %ecx");
+			i++;
+		}
+	}
+	
+	vec_str[i].append("movl ");
+	
+	if(cond->nodes[1].type == AST_TYPE_TOKEN){
+		//str1 = gen_pn_num(tree->nodes[0].ptr_t, false);
+		vec_str[i].append("$");
+		vec_str[i].append(cond->nodes[1].ptr_t->Lexeme);
+	}else if(cond->nodes[1].ptr_n->type == AST_TYPE_ID){
+		if(cond->nodes[1].ptr_n->nodes[0].type == AST_TYPE_NODE){
+			//std::cout << "tr2arr1\n";
+			//std::cout << tree->nodes[0].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme <<"\n";
+			vec_str[i].append(cond->nodes[1].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme);
+			vec_str[i].append("(, %ecx, 4)");
+		}else{
+			vec_str[i].append(cond->nodes[1].ptr_n->nodes[0].ptr_t->Lexeme);
+		}
+	}else if(is_binop(cond->nodes[1].ptr_n->type)){
+		str1 = gen_pn(cond->nodes[1].ptr_n, false);
+		vec_str[i].append(str1);
+	}
+	vec_str[i].append(", %eax");
+	i++;
+	
+	if(cond->nodes[0].type == AST_TYPE_NODE && cond->nodes[0].ptr_n->type == AST_TYPE_ID){
+		if(cond->nodes[0].ptr_n->nodes[0].type == AST_TYPE_NODE){
+			//std::cout << "tr1arr1\n";
+			vec_str[i].append("movl $");
+			vec_str[i].append(cond->nodes[0].ptr_n->nodes[0].ptr_n->nodes[1].ptr_t->Lexeme);
+			vec_str[i].append(", %ecx");
+			i++;
+		}
+	}
+	
+	vec_str[i].append("cmpl %eax, ");
+	
+	if(cond->nodes[0].ptr_n->type == AST_TYPE_ID){
+		if(cond->nodes[0].ptr_n->nodes[0].type == AST_TYPE_NODE){
+			//std::cout << "tr2arr1\n";
+			//std::cout << tree->nodes[0].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme <<"\n";
+			vec_str[i].append(cond->nodes[0].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme);
+			vec_str[i].append("(, %ecx, 4)");
+		}else{
+			vec_str[i].append(cond->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme);
+		}
+	}
+	i++;
+	
+	for(int j = 0; j < i; j++){
+		asm_text.push_back(vec_str[j]);
+	}
+	str1.clear();
+	if(check == 1)
+		str1.append("je ");
+	if(check == 2)
+		str1.append("jne ");
+	if(check == 3)
+		str1.append("jl ");
+	if(check == 4)
+		str1.append("jg ");
+	str1.append("B");
+	str1.append(std::to_string(bnum));
+	str1.append("_");
+	str1.append(std::to_string(cb));
+	asm_text.push_back(str1);
+	str1.clear();
+	if(is_print_next){
+		str1.append("jmp C");
+		str1.append(std::to_string(bnum));
+		str1.append("_");
+		str1.append(std::to_string(cb+1));
+		asm_text.push_back(str1);
+		str1.clear();
+	}
+	str1.append("B");
+	str1.append(std::to_string(bnum));
+	str1.append("_");
+	str1.append(std::to_string(cb));
+	str1.append(":");
+	asm_text.push_back(str1);
+	str1.clear();
+	gen_main(tree->nodes[1].ptr_n);
+	str1.append("jmp BE");
+	str1.append(std::to_string(bnum));
+	asm_text.push_back(str1);
+	return 0;
+}
+
+int gen_choice(struct ast *tree){
+	std::string fstr;
+	for(unsigned int i = 0; i < tree->nodes.size(); i++){
+		if(tree->nodes[i].ptr_n->type == AST_IF){
+			bool check;
+			if(i != tree->nodes.size()-1)
+				check = true;
+			else check = false;
+			gen_if(tree->nodes[i].ptr_n, i, check);
+		}else if (tree->nodes[i].ptr_n->type == AST_ELSE){
+			fstr.append("C");
+			fstr.append(std::to_string(bnum));
+			fstr.append("_");
+			fstr.append(std::to_string(i));
+			fstr.append(":");
+			asm_text.push_back(fstr);
+			fstr.clear();
+			gen_main(tree->nodes[i].ptr_n);
+		}
+	}
+	fstr.append("BE");
+	fstr.append(std::to_string(bnum));
+	fstr.append(":");
+	bnum++;
+	asm_text.push_back(fstr);
+	return 0;
+}
+
 int gen_main(struct ast *tree){
 	for(unsigned int i = 0; i < tree->nodes.size(); i++){
 		if(tree->nodes[i].ptr_n->type == AST_FUNC){
 			gen_func(tree->nodes[i].ptr_n);
 		}else if(tree->nodes[i].ptr_n->type == AST_ASSIGN){
 			gen_assign(tree->nodes[i].ptr_n);
+		}else if(tree->nodes[i].ptr_n->type == AST_CHOICE){
+			gen_choice(tree->nodes[i].ptr_n);
 		}
 	}
 	return 0;
@@ -415,6 +571,7 @@ int gen_main(struct ast *tree){
 
 int codegen(struct ast *tree, class symtab *t){
 	fnum = 0;
+	bnum = 0;
 	gtab = t;
 	is_pr_created = false;
 	gen_pre(tree->nodes[0].ptr_n);

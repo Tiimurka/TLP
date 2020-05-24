@@ -23,6 +23,10 @@ F9: .string "TESTING INT VAR ASSIGN: a = %d\n"
 F10: .string "TESTING ARRAY: %d%d%d%d%d\n"
 F11: .string "TESTING ARRAY ARITHMETICS: %d\n"
 F12: .string "a = %d\n"
+F13: .string "TESTING IF/ELSE CONSTRUCTION: "
+F14: .string "VAR A IS BIGGER THAN 100\n"
+F15: .string "VAR A IS EQUAL 100\n"
+F16: .string "VAR A LESS THAN 100\n"
 .text
 .globl main
 main:
@@ -99,7 +103,7 @@ pushl pr1
 pushl $F8
 call printf
 addl  $8, %esp
-movl $322, a
+movl $0, a
 pushl a
 pushl $F9
 call printf
@@ -159,4 +163,31 @@ pushl a
 pushl $F12
 call printf
 addl  $8, %esp
+pushl $F13
+call printf
+addl  $4, %esp
+movl $100, %eax
+cmpl %eax, a
+jg B0_0
+jmp C0_1
+B0_0:
+pushl $F14
+call printf
+addl  $4, %esp
+jmp BE0
+C0_1:
+movl $100, %eax
+cmpl %eax, a
+je B0_1
+jmp C0_2
+B0_1:
+pushl $F15
+call printf
+addl  $4, %esp
+jmp BE0
+C0_2:
+pushl $F16
+call printf
+addl  $4, %esp
+BE0:
 ret

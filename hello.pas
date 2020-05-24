@@ -38,7 +38,7 @@ if (a = 0) then
 	writeln('kek');
 	
 end
-else if (a < 1) then
+else if (a <> 1) then
 begin
 	writeln(a+2);
 	b := 3;
