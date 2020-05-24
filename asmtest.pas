@@ -38,6 +38,18 @@ begin
 	else
 	begin
 		writeln('VAR A LESS THAN 100');
+		if (arr[4] > 100) then
+		 begin
+			writeln('VAR ARR[4] IS BIGGER THAN 100');
+		end
+		else if (arr[4] = 100) then
+		begin
+			writeln('VAR ARR[4] IS EQUAL 100');
+		end
+		else
+		begin
+			writeln('VAR ARR[4] LESS THAN 100');
+		end;
 	end;
 	//writeln ('Hello World!');
 end.

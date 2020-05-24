@@ -417,12 +417,12 @@ int is_logic(unsigned int type){
 	return 0;
 }
 
-int gen_if(struct ast *tree, unsigned int cb, bool is_print_next){
+int gen_if(struct ast *tree, unsigned int curr_bnum, unsigned int cb, bool is_print_next){
 	std::string vec_str[4];
 	std::string str1;
 	if(cb != 0){
 		str1.append("C");
-		str1.append(std::to_string(bnum));
+		str1.append(std::to_string(curr_bnum));
 		str1.append("_");
 		str1.append(std::to_string(cb));
 		str1.append(":");
@@ -501,21 +501,21 @@ int gen_if(struct ast *tree, unsigned int cb, bool is_print_next){
 	if(check == 4)
 		str1.append("jg ");
 	str1.append("B");
-	str1.append(std::to_string(bnum));
+	str1.append(std::to_string(curr_bnum));
 	str1.append("_");
 	str1.append(std::to_string(cb));
 	asm_text.push_back(str1);
 	str1.clear();
 	if(is_print_next){
 		str1.append("jmp C");
-		str1.append(std::to_string(bnum));
+		str1.append(std::to_string(curr_bnum));
 		str1.append("_");
 		str1.append(std::to_string(cb+1));
 		asm_text.push_back(str1);
 		str1.clear();
 	}
 	str1.append("B");
-	str1.append(std::to_string(bnum));
+	str1.append(std::to_string(curr_bnum));
 	str1.append("_");
 	str1.append(std::to_string(cb));
 	str1.append(":");
@@ -523,23 +523,25 @@ int gen_if(struct ast *tree, unsigned int cb, bool is_print_next){
 	str1.clear();
 	gen_main(tree->nodes[1].ptr_n);
 	str1.append("jmp BE");
-	str1.append(std::to_string(bnum));
+	str1.append(std::to_string(curr_bnum));
 	asm_text.push_back(str1);
 	return 0;
 }
 
 int gen_choice(struct ast *tree){
 	std::string fstr;
+	unsigned int curr_bnum = bnum;
+	bnum++;
 	for(unsigned int i = 0; i < tree->nodes.size(); i++){
 		if(tree->nodes[i].ptr_n->type == AST_IF){
 			bool check;
 			if(i != tree->nodes.size()-1)
 				check = true;
 			else check = false;
-			gen_if(tree->nodes[i].ptr_n, i, check);
+			gen_if(tree->nodes[i].ptr_n, curr_bnum, i, check);
 		}else if (tree->nodes[i].ptr_n->type == AST_ELSE){
 			fstr.append("C");
-			fstr.append(std::to_string(bnum));
+			fstr.append(std::to_string(curr_bnum));
 			fstr.append("_");
 			fstr.append(std::to_string(i));
 			fstr.append(":");
@@ -549,9 +551,8 @@ int gen_choice(struct ast *tree){
 		}
 	}
 	fstr.append("BE");
-	fstr.append(std::to_string(bnum));
+	fstr.append(std::to_string(curr_bnum));
 	fstr.append(":");
-	bnum++;
 	asm_text.push_back(fstr);
 	return 0;
 }

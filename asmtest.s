@@ -27,6 +27,9 @@ F13: .string "TESTING IF/ELSE CONSTRUCTION: "
 F14: .string "VAR A IS BIGGER THAN 100\n"
 F15: .string "VAR A IS EQUAL 100\n"
 F16: .string "VAR A LESS THAN 100\n"
+F17: .string "VAR ARR[4] IS BIGGER THAN 100\n"
+F18: .string "VAR ARR[4] IS EQUAL 100\n"
+F19: .string "VAR ARR[4] LESS THAN 100\n"
 .text
 .globl main
 main:
@@ -189,5 +192,31 @@ C0_2:
 pushl $F16
 call printf
 addl  $4, %esp
+movl $100, %eax
+movl $4, %ecx
+cmpl %eax, arr(, %ecx, 4)
+jg B1_0
+jmp C1_1
+B1_0:
+pushl $F17
+call printf
+addl  $4, %esp
+jmp BE1
+C1_1:
+movl $100, %eax
+movl $4, %ecx
+cmpl %eax, arr(, %ecx, 4)
+je B1_1
+jmp C1_2
+B1_1:
+pushl $F18
+call printf
+addl  $4, %esp
+jmp BE1
+C1_2:
+pushl $F19
+call printf
+addl  $4, %esp
+BE1:
 BE0:
 ret
