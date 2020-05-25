@@ -55,5 +55,27 @@ begin
 	for i := (5+5) downto arr[4] do begin
 		writeln('i = ', i);
 	end;
+	write('TESTING REPEAT/UNTIL CONSTRUCTION');
+	write(' VAR A NOW ', a);
+	repeat
+		a:=a+1;
+	until (a < 50);
+	writeln(' BUT AFTER REPUN IT BECAME ', a);
+	
+	write('TESTING WHILE CONSTRUCTION');
+	write(' VAR A NOW ', a);
+	while(a > 10) do begin
+		a:=a-1;
+	end;
+	writeln(' BUT AFTER WHILE IT BECAME ', a);
+	
+	writeln('TESTING LOOP WITH ARRAY');
+	i := 0;
+	while(i < 5) do begin
+		writeln('arr[', i, '] = ', arr[i]);
+		i := i+1;
+	end;
+	
+	
 	//writeln ('Hello World!');
 end.

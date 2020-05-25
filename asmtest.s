@@ -34,6 +34,14 @@ F17: .string "VAR ARR[4] IS BIGGER THAN 100\n"
 F18: .string "VAR ARR[4] IS EQUAL 100\n"
 F19: .string "VAR ARR[4] LESS THAN 100\n"
 F20: .string "i = %d\n"
+F21: .string "TESTING REPEAT/UNTIL CONSTRUCTION"
+F22: .string " VAR A NOW %d"
+F23: .string " BUT AFTER REPUN IT BECAME %d\n"
+F24: .string "TESTING WHILE CONSTRUCTION"
+F25: .string " VAR A NOW %d"
+F26: .string " BUT AFTER WHILE IT BECAME %d\n"
+F27: .string "TESTING LOOP WITH ARRAY\n"
+F28: .string "arr[%d] = %d\n"
 .text
 .globl main
 main:
@@ -235,7 +243,68 @@ call printf
 addl  $8, %esp
 decl i
 L0_check:
-movl $0, %eax
+movl $4, %ecx
+movl arr(, %ecx, 4), %eax
 cmpl %eax, i
 jnl L0
+pushl $F21
+call printf
+addl  $4, %esp
+pushl a
+pushl $F22
+call printf
+addl  $8, %esp
+L1:
+movl a, %eax
+addl $1, %eax
+movl %eax, pr1
+movl %eax , a
+movl $50, %eax
+cmpl %eax, a
+jl L1
+pushl a
+pushl $F23
+call printf
+addl  $8, %esp
+pushl $F24
+call printf
+addl  $4, %esp
+pushl a
+pushl $F25
+call printf
+addl  $8, %esp
+jmp L2_check
+L2:
+movl a, %eax
+subl $1, %eax
+movl %eax, pr1
+movl %eax , a
+L2_check:
+movl $10, %eax
+cmpl %eax, a
+jg L2
+pushl a
+pushl $F26
+call printf
+addl  $8, %esp
+pushl $F27
+call printf
+addl  $4, %esp
+movl $0, i
+jmp L3_check
+L3:
+movl i, %ecx
+pushl arr(, %ecx, 4)
+pushl i
+pushl $F28
+call printf
+addl  $12, %esp
+movl i, %eax
+addl $1, %eax
+movl %eax, pr1
+movl %eax , i
+L3_check:
+movl $5, %eax
+cmpl %eax, i
+jl L3
 ret
