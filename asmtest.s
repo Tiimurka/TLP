@@ -5,6 +5,9 @@ str: .string
 a: .long 0
 
 
+i: .long 0
+
+
 arr: .long 0, 0, 0, 0, 0
 
 
@@ -30,6 +33,7 @@ F16: .string "VAR A LESS THAN 100\n"
 F17: .string "VAR ARR[4] IS BIGGER THAN 100\n"
 F18: .string "VAR ARR[4] IS EQUAL 100\n"
 F19: .string "VAR ARR[4] LESS THAN 100\n"
+F20: .string "i = %d\n"
 .text
 .globl main
 main:
@@ -219,4 +223,19 @@ call printf
 addl  $4, %esp
 BE1:
 BE0:
+movl $5, %eax
+addl $5, %eax
+movl %eax, pr1
+movl %eax , i
+jmp L0_check
+L0:
+pushl i
+pushl $F20
+call printf
+addl  $8, %esp
+decl i
+L0_check:
+movl $0, %eax
+cmpl %eax, i
+jnl L0
 ret

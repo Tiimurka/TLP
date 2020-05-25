@@ -1,5 +1,5 @@
 var str : string;
-var a : integer;
+var a, i : integer;
 var arr:array[0..4] of integer;
 
 begin
@@ -50,6 +50,10 @@ begin
 		begin
 			writeln('VAR ARR[4] LESS THAN 100');
 		end;
+	end;
+	
+	for i := (5+5) downto arr[4] do begin
+		writeln('i = ', i);
 	end;
 	//writeln ('Hello World!');
 end.
