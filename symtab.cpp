@@ -45,9 +45,9 @@ bool symtab::ast_handle(struct ast *tree){
 					return false;
 				}
 			}else if(node->type == AST_FUNC_DECL){
-				if(node->nodes[0].ptr_n != NULL && node->nodes[0].ptr_n->type == AST_VAR){
+				if(node->nodes[1].ptr_n != NULL && node->nodes[1].ptr_n->type == AST_VAR){
 					//std::cout << "Entering!\n";
-					struct ast *decl1 = node->nodes[0].ptr_n;
+					struct ast *decl1 = node->nodes[1].ptr_n;
 					struct ast *decl2 = decl1->nodes[0].ptr_n;
 					struct tabnode *ins2;
 					for(unsigned int j = 0; j < decl2->nodes.size(); j++){

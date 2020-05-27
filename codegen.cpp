@@ -297,16 +297,16 @@ int gen_func(struct ast *tree){
 					//std::cout << node->nodes[0].ptr_t->Lexeme << "\n";
 					format.append(node->nodes[0].ptr_t->Lexeme);
 				}else if(node->type == AST_TYPE_ID && node->nodes[0].type == AST_TYPE_TOKEN){
-					if(!is_func){
+					//if(!is_func){
 						struct tabnode* n = gtab->get(node->nodes[0].ptr_t->Lexeme);
 						if(n->type == TC_T_INT){
 							format.append("%d");
 						}else if(n->type == TC_T_STRING){
 							format.append("%s");
 						}
-					}else{
-						format.append("%d");
-					}
+					//}else{
+						//format.append("%d");
+					//}
 				}else if(is_binop(node->type)){
 					format.append("%d");
 					//gen_pn(n);
