@@ -341,6 +341,7 @@ int check_func_decl(Token *token, struct ast *tree){
 	if(tmp_token == NULL)
 		return -1;
 	if(tmp_token->TokenClass == TC_ID){
+		node_insert(tree, tmp_token, 9999);
 		tmp_token = GNT();
 		if(tmp_token == NULL)
 			return -1;
@@ -1133,6 +1134,10 @@ int parse_f_cont (Token *token, struct ast *tree){
 	int ret = 0;
 	Token *tmp_token;
 	tmp_token = token;
+	if (tmp_token->TokenClass == TC_RPAREN){
+		move_lex_pos(-1);
+		return 0;
+	}
 	//node_insert(tree, NULL, AST_ARG);
 	ret += parse_arg(tmp_token, tree);
 	if (ret != 0)

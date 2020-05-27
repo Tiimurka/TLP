@@ -2,6 +2,22 @@ var str : string;
 var a, i : integer;
 var arr:array[0..4] of integer;
 
+function test0():integer;
+begin
+	writeln ('THIS IS FUNCTION WITH 0 ARGS!');
+end;
+
+function test1(v:integer):integer;
+begin
+	writeln ('THIS IS FUNCTION WITH 1 ARG: ', v);
+end;
+
+function test2(var1, var2:integer):integer;
+begin
+	write ('THIS IS FUNCTION WITH 2 ARGS: ');
+	writeln (var1, ' AND ', var2);
+end;
+
 begin
 	write('GIVE ME YOUR NUM: ');
 	read(a);
@@ -76,6 +92,10 @@ begin
 		i := i+1;
 	end;
 	
+	writeln('TESTING FUNCTIONS');
+	test0();
+	test1(2);
+	test2(i, arr[1]);
 	
 	//writeln ('Hello World!');
 end.
