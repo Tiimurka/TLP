@@ -154,19 +154,24 @@ bool checkTypeForBinop(unsigned int type, int ret1, int ret2){
 int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublevel){
 	//std::cout << "Entering sem_expr, type = "<< AST_NAMES[tree->type] <<"\n";
 	int ret1, ret2;
+	//std::cout<< AST_NAMES[tree->type] << "\n";
 	if(isBinop(tree->nodes[0].ptr_n))
 		ret1 = sem_expr(tree->nodes[0].ptr_n, curr_level, curr_sublevel);
 	else if(tree->nodes[0].ptr_n != NULL && tree->nodes[0].ptr_n->type == AST_TYPE_ID)
 		ret1 = sem_id(tree->nodes[0].ptr_n, SEM_DEFAULT, curr_level, curr_sublevel);
-	else
+	else{
+		//std::cout << tree->nodes[0].ptr_t->Lexeme << "\n";
 		ret1 = TypeHandler(tree->nodes[0].ptr_t);
+	}
 	
 	if(isBinop(tree->nodes[1].ptr_n))
 		ret2 = sem_expr(tree->nodes[1].ptr_n, curr_level, curr_sublevel);
 	else if(tree->nodes[1].ptr_n != NULL && tree->nodes[1].ptr_n->type == AST_TYPE_ID)
 		ret2 = sem_id(tree->nodes[1].ptr_n, SEM_DEFAULT, curr_level, curr_sublevel);
-	else
+	else{
+		//std::cout << tree->nodes[1].ptr_t->Lexeme << "\n";
 		ret2 = TypeHandler(tree->nodes[1].ptr_t);
+	}
 	bool check = checkTypeForBinop(tree->type, ret1, ret2);
 	if(!check){
 		std::cout << "Error unsuppoted operand type(s) for " << AST_NAMES[tree->type]
@@ -215,7 +220,7 @@ int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsign
 		type = sem_id(assign, flg, curr_level, curr_sublevel);
 		if(type < 0)
 			return -1;
-		if(assign->nodes[1].type == AST_TYPE_NODE && tree->nodes[1].ptr_n->type == AST_TYPE_ID){
+		if(tree->nodes[1].type == AST_TYPE_NODE && tree->nodes[1].ptr_n->type == AST_TYPE_ID){
 			ret2 = sem_id(assign, flg, curr_level, curr_sublevel);
 		}else if(isBinop(tree->nodes[1].ptr_n) == false){
 			ret2 = TypeHandler(tree->nodes[1].ptr_n->nodes[0].ptr_t);

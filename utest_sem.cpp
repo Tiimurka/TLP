@@ -16,7 +16,7 @@ TEST_CASE ("error","check_error"){
 }
 
 TEST_CASE ("sem","check_sem"){
-	struct ast *tree = parse_test("nod.pas", false);
+	struct ast *tree = parse_test("utestsite.pas", false);
 	symtab s(tree);
 	tree = sem_analyzer(tree, &s);
 	REQUIRE(tree != NULL);

@@ -5,7 +5,7 @@
 #include "ast.h"
 
 TEST_CASE ("parse_test1", "check_goodvar"){
-	struct ast *tree = parse_test("nod.pas", false);
+	struct ast *tree = parse_test("utestsite.pas", false);
 	REQUIRE(tree != NULL);
 	REQUIRE(tree->type == AST_PROG);
 	REQUIRE(tree->nodes[0].ptr_n->type == AST_PRE);

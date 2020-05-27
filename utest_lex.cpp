@@ -88,7 +88,7 @@ TEST_CASE ("LexAdd", "check_add"){
 
 TEST_CASE ("GetNextToken", "check_token"){
 	std::ifstream fin;
-	fin.open("nod.pas");
+	fin.open("utestsite.pas");
 	LexInit(&fin);
 	Token *t = GetNextToken(&fin);
 	REQUIRE(t->row == 1);

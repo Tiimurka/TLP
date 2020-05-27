@@ -75,7 +75,7 @@ begin
 	write(' VAR A NOW ', a);
 	repeat
 		a:=a+1;
-	until (a < 50);
+	until (a > 50);
 	writeln(' BUT AFTER REPUN IT BECAME ', a);
 	
 	write('TESTING WHILE CONSTRUCTION');
