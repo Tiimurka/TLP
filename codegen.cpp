@@ -960,35 +960,49 @@ int codegen_init(class symtab *t){
 	return 0;
 }
 
-int codegen(struct ast *tree, class symtab *t){
+std::string codegen(std::string filename, struct ast *tree, class symtab *t, bool is_print){
 	codegen_init(t);
 	gen_pre(tree->nodes[0].ptr_n);
 	//std::cout << "pre has been passed\n";
 	gen_main(tree->nodes[1].ptr_n);
 	//std::cout << "gen finished\n";
 	std::ofstream fout;
-	fout.open("asmtest.s");
+	filename.pop_back(); filename.pop_back(); filename.pop_back();
+	filename.append("s");
+	fout.open(filename);
 	//std::cout << ".data\n";
 	fout << ".data\n";
+	if(is_print)
+		std::cout << ".data\n";
 	//fout << "MAXINT: .long 32767\n";
-	for(unsigned int i = 0; i < asm_data.size(); i++)
+	for(unsigned int i = 0; i < asm_data.size(); i++){
 		//std::cout << asm_data[i] << "\n";
 		fout << asm_data[i] << "\n";
+		if(is_print)
+			std::cout << asm_data[i] << "\n";
+	}
 	//std::cout << ".text\n";
 	//std::cout << ".globl main\n";
 	//std::cout << "main:\n";
 	
-	for(unsigned int i = 0; i < asm_func.size(); i++)
+	for(unsigned int i = 0; i < asm_func.size(); i++){
 		//std::cout << asm_func[i] << "\n";
 		fout << asm_func[i] << "\n";
-	
+		if(is_print)
+			std::cout << asm_func[i] << "\n";
+	}
 	fout << ".text\n";
 	fout << ".globl main\n";
 	fout << "main:\n";
-	for(unsigned int i = 0; i < asm_text.size(); i++)
+	if(is_print)
+		std::cout << "text\n.globl main\nmain:\n";
+	for(unsigned int i = 0; i < asm_text.size(); i++){
 		//std::cout << asm_text[i] << "\n";
 		fout << asm_text[i] << "\n";
+		if(is_print)
+			std::cout << asm_text[i] << "\n";
+	}
 	//std::cout << "ret\n";
 	fout << "ret\n";
-	return 0;
+	return filename;
 }

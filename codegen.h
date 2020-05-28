@@ -18,6 +18,6 @@ int gen_if(struct ast *tree, unsigned int curr_bnum, unsigned int cb, bool is_pr
 int gen_choice(struct ast *tree);
 int gen_loop(struct ast *tree);
 int gen_main(struct ast *tree);
-int codegen(struct ast *tree, class symtab *t);
+std::string codegen(std::string filename, struct ast *tree, class symtab *t, bool is_print);
 
 #endif

@@ -74,23 +74,15 @@ int main(int argc, char *argv[]){
 	//else
 		//std::cout << "Check: " << n->level << " " << n->sublevel << "\n";
 	sem_analyzer(tree, &s);
-	if(is_dump_asm)
-		codegen(tree, &s);
-	//show_node(tree, 0);
-	//show_node(tree->nodes[0].ptr_n, 1);
-	//show_node(tree->nodes[1].ptr_n, 1);
-	/*char str[] = "(2*(((322+1)*(2*2)) mod (2+3))) div 10;";
-	struct ast *tree = ast_create(0);
-	char *test = str;
-	expr_insert(tree, test);
-	std::cout << AST_NAMES[tree->type] << "\n";
-	std::cout << AST_NAMES[tree->nodes[0].ptr_n->type] << "\n";
-	std::cout << AST_NAMES[tree->nodes[0].ptr_n->nodes[1].ptr_n->type] << "\n";
-	std::cout << tree->nodes[1].ptr_t->Lexeme << "\n";*/
-	
-	/*for (unsigned int i = 0; i < Tokens.size(); i++){
-		std::cout << TC_NAMES[Tokens[i].TokenClass] << " " << Tokens[i].Lexeme << std::endl;
-	}
-	std::cout<< "Result: " << check << std::endl;*/
+	//if(is_dump_asm){
+		str = codegen(str, tree, &s, is_dump_asm);
+		std::string call = "gcc -m32 ";
+		call.append(str);
+		call.append(" -o ");
+		str.pop_back(); str.pop_back();
+		call.append(str);
+		system(call.c_str());
+	//}
+
 	return 0;
 }
