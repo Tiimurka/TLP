@@ -1,12 +1,13 @@
 CC=c++
 CFLAGS=-Wall -c
 LDFLAGS=-Wall
-TARGET=parse utest_lex utest_parse utest_symtab utest_sem
+TARGET=parse utest_lex utest_parse utest_symtab utest_sem utest_codegen
 BUILD_PARSE=build/main.o build/lex.o build/parse.o  build/ast.o build/symtab.o build/sem.o build/codegen.o
 BUILD_UTEST_LEX=build/utest_lex.o  build/lex.o
 BUILD_UTEST_PARSE=build/utest_parse.o build/lex.o build/parse.o  build/ast.o
 BUILD_UTEST_SYMTAB=build/utest_symtab.o build/lex.o build/parse.o  build/ast.o build/symtab.o
 BUILD_UTEST_SEM=build/utest_sem.o build/lex.o build/parse.o  build/ast.o build/symtab.o build/sem.o
+BUILD_UTEST_CODEGEN=build/utest_codegen.o build/lex.o build/parse.o  build/ast.o build/symtab.o build/sem.o build/codegen.o
 
 all: $(TARGET)
 
@@ -24,6 +25,9 @@ utest_symtab: $(BUILD_UTEST_SYMTAB)
 
 utest_sem: $(BUILD_UTEST_SEM)
 	$(CC) $(LDFLAGS) $(BUILD_UTEST_SEM) -o utest_sem
+
+utest_codegen: $(BUILD_UTEST_CODEGEN)
+	$(CC) $(LDFLAGS) $(BUILD_UTEST_CODEGEN) -o utest_codegen
 
 build/%.o: %.cpp
 	$(CC) $(CFLAGS) $< -o $@

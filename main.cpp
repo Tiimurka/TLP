@@ -14,7 +14,7 @@ bool is_pas(std::string str){
 
 int main(int argc, char *argv[]){
 	bool is_dump_tokens = false, is_dump_ast = false, is_dump_symtab = false, is_dump_asm = false, is_fn_set = false;
-	std::string str = "arrtest.pas";
+	std::string str = "asmtest.pas";
 	if(argc != 1){
 		for(int i = 1; i < argc; i++){
 			if(std::strcmp(argv[i], "--dump-tokens") == 0){

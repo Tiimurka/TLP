@@ -157,8 +157,11 @@ int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublev
 	//std::cout<< AST_NAMES[tree->type] << "\n";
 	if(isBinop(tree->nodes[0].ptr_n))
 		ret1 = sem_expr(tree->nodes[0].ptr_n, curr_level, curr_sublevel);
-	else if(tree->nodes[0].ptr_n != NULL && tree->nodes[0].ptr_n->type == AST_TYPE_ID)
+	else if(tree->nodes[0].ptr_n != NULL && tree->nodes[0].ptr_n->type == AST_TYPE_ID){
 		ret1 = sem_id(tree->nodes[0].ptr_n, SEM_DEFAULT, curr_level, curr_sublevel);
+		if(ret1 < 0)
+			return -1;
+	}
 	else{
 		//std::cout << tree->nodes[0].ptr_t->Lexeme << "\n";
 		ret1 = TypeHandler(tree->nodes[0].ptr_t);
@@ -166,8 +169,11 @@ int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublev
 	
 	if(isBinop(tree->nodes[1].ptr_n))
 		ret2 = sem_expr(tree->nodes[1].ptr_n, curr_level, curr_sublevel);
-	else if(tree->nodes[1].ptr_n != NULL && tree->nodes[1].ptr_n->type == AST_TYPE_ID)
+	else if(tree->nodes[1].ptr_n != NULL && tree->nodes[1].ptr_n->type == AST_TYPE_ID){
 		ret2 = sem_id(tree->nodes[1].ptr_n, SEM_DEFAULT, curr_level, curr_sublevel);
+		if(ret2 < 0)
+			return -1;
+	}
 	else{
 		//std::cout << tree->nodes[1].ptr_t->Lexeme << "\n";
 		ret2 = TypeHandler(tree->nodes[1].ptr_t);
@@ -222,6 +228,8 @@ int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsign
 			return -1;
 		if(tree->nodes[1].type == AST_TYPE_NODE && tree->nodes[1].ptr_n->type == AST_TYPE_ID){
 			ret2 = sem_id(assign, flg, curr_level, curr_sublevel);
+			if(ret2 < 0)
+				return -1;
 		}else if(isBinop(tree->nodes[1].ptr_n) == false){
 			ret2 = TypeHandler(tree->nodes[1].ptr_n->nodes[0].ptr_t);
 		}

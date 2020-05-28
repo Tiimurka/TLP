@@ -1,12 +1,12 @@
 var 
-	k, l, n: integer;
+	k, l, n, check: integer;
 
 var arr:array[-11..10] of integer;
 
 var
 	c:real;
 	
-function test1 (a1, c1 : real):integer;
+function test1 (a1, c1 : integer):integer;
 begin
 	k := 228;
 	l := 322;
@@ -23,19 +23,26 @@ begin
     writeln ('Введите два числа: ');
 								
     readln (k, l);
- 
+	check := 2;
 	repeat
             if (k > l) then begin
 				k := k mod l;
 			end
-            else begin
+            else 
+			begin
                 l := l mod k;
 			end;
 			writeln(l, ' ', k);
-        until (k = 0) or (l = 0);
+			if(k = 0) then
+				check:=0;
+				
+			if(l = 0) then
+				check:=0;
+				
+        until (check = 0);
 	n:=k+l;
     writeln ('НОД = ', n);
-
+	test1(30, 50);
 //readln
 end.
 

@@ -16,6 +16,36 @@ bool is_func;
 bool is_mod;
 //bool pr_num;
 
+std::string get_asm_line(unsigned int part, unsigned int linenum){
+	if(part == 0){
+		if(linenum >= asm_data.size())
+			return "###";
+		return asm_data[linenum];
+	}
+	else if(part == 1){
+		if(linenum >= asm_func.size())
+			return "###";
+		return asm_func[linenum];
+	}
+	else if(part == 2){
+		if(linenum >= asm_text.size())
+			return "###";
+		return asm_text[linenum];
+	}
+	else
+		std::cout << "wrong part number!\n";
+	return "kek";
+}
+
+int clear_asm_line(unsigned int part){
+	if(part == 0)
+		asm_data.clear();
+	else if(part == 1)
+		asm_func.clear();
+	else if(part == 2)
+		asm_text.clear();
+	return 0;
+}
 
 int line_insert(std::string strins){
 	if(is_func)
@@ -50,7 +80,7 @@ int gen_var(struct ast *tree){
 		}
 		asm_data.push_back(vec_str);
 		vec_str.clear();
-		vec_str.append("\n");
+		//vec_str.append("\n");
 		asm_data.push_back(vec_str);
 	}
 	return 0;
@@ -355,9 +385,11 @@ int gen_func(struct ast *tree){
 						pre_arr.append(arrinfo->nodes[1].ptr_t->Lexeme);
 						pre_arr.append(", %ecx");
 						line_insert(pre_arr);
+						pre_arr.clear();
 						fstr.append(arrinfo->nodes[0].ptr_t->Lexeme);
 						fstr.append("(, %ecx, 4)");
 						line_insert(fstr);
+						fstr.clear();
 					}else if(check == 3 || check == 4){
 						if(arrinfo->nodes[1].ptr_t->TokenClass == TC_NUM){
 							fstr.append("$");
@@ -917,7 +949,7 @@ int gen_main(struct ast *tree){
 	return 0;
 }
 
-int codegen(struct ast *tree, class symtab *t){
+int codegen_init(class symtab *t){
 	fnum = 0;
 	bnum = 0;
 	lnum = 0;
@@ -925,6 +957,11 @@ int codegen(struct ast *tree, class symtab *t){
 	is_pr_created = false;
 	is_func = false;
 	is_mod = false;
+	return 0;
+}
+
+int codegen(struct ast *tree, class symtab *t){
+	codegen_init(t);
 	gen_pre(tree->nodes[0].ptr_n);
 	//std::cout << "pre has been passed\n";
 	gen_main(tree->nodes[1].ptr_n);
