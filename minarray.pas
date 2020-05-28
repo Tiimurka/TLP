@@ -9,6 +9,8 @@ begin
 	i := 0;
     while(i < 10) do begin
         readln(arr[i]);
+		write('Элемент записан');
+		writeln(', вводите следующий');
         if (min > arr[i]) then
 		begin
 			min:=arr[i];
