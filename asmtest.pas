@@ -22,6 +22,9 @@ begin
 	write('GIVE ME YOUR NUM: ');
 	read(a);
 	writeln('HERE IS YOUR NUM: ', a);
+	write('GIVE ME YOUR STRING: ');
+	read(str);
+	writeln('HERE IS YOUR STRING: ', str);
 	writeln('TESTING ADD: 2+2 = ', 2+2);
 	writeln('TESTING SUB: 2-4 = ', 2-4);
 	writeln('TESTING MUL: 2*2 = ', 2*2);

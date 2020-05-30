@@ -357,7 +357,9 @@ int gen_func(struct ast *tree){
 					node = tree->nodes[i].ptr_n;
 					//std::string fstr;
 					fstr.append("pushl ");
-					if(/*node->nodes[0].ptr_t->TokenClass == TC_ID || */check == 3 || check == 4)
+					struct tabnode* n = gtab->get(node->nodes[0].ptr_t->Lexeme);
+					//std::cout << TC_NAMES[n->type] << "\n";
+					if(n->type == TC_T_STRING || check == 3 || check == 4)
 						fstr.append("$");
 					fstr.append(node->nodes[0].ptr_t->Lexeme);
 					line_insert(fstr);
