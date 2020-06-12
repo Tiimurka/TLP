@@ -28,10 +28,10 @@ TEST_CASE ("codegen_test2", "check_func"){
 	//std::cout << AST_NAMES[ptr->nodes[1].ptr_n->type] << "\n";
 	gen_func(ptr->nodes[1].ptr_n);
 	REQUIRE(get_asm_line(0, 0) == "F0: .string \"c = \\n\"");
-	REQUIRE(get_asm_line(2, 0) == "pushl c");
-	REQUIRE(get_asm_line(2, 1) == "pushl $F0");
+	REQUIRE(get_asm_line(2, 0) == "movl c, %esi");
+	REQUIRE(get_asm_line(2, 1) == "movl $F0, %edi");
 	REQUIRE(get_asm_line(2, 2) == "call printf");
-	REQUIRE(get_asm_line(2, 3) == "addl  $8, %esp");
+	//REQUIRE(get_asm_line(2, 3) == "addl  $8, %esp");
 	clear_asm_line(0);
 	clear_asm_line(2);
 }
@@ -50,9 +50,9 @@ TEST_CASE ("codegen_test3", "check_repun"){
 			break;
 	}*/
 	REQUIRE(get_asm_line(2, 0) == "L0:");
-	REQUIRE(get_asm_line(2, 45) == "movl $0, %eax");
-	REQUIRE(get_asm_line(2, 46) == "cmpl %eax, check");
-	REQUIRE(get_asm_line(2, 47) == "jne L0");
+	REQUIRE(get_asm_line(2, 44) == "movl $0, %eax");
+	REQUIRE(get_asm_line(2, 45) == "cmpl %eax, check");
+	REQUIRE(get_asm_line(2, 46) == "jne L0");
 	clear_asm_line(0);
 	clear_asm_line(2);
 }
@@ -91,10 +91,14 @@ TEST_CASE ("codegen_test5", "check_func_decl"){
 		if(str == "###")
 			break;
 	}*/
+	
 	REQUIRE(get_asm_line(1, 0) == "test1:");
-	REQUIRE(get_asm_line(1, 1) == "movl %eax, a1");
-	REQUIRE(get_asm_line(1, 2) == "movl %ebx, c1");
-	REQUIRE(get_asm_line(1, 25) == "ret");
+	REQUIRE(get_asm_line(1, 1) == "pushq %rbp");
+	REQUIRE(get_asm_line(1, 2) == "movq %rsp, %rbp");
+	REQUIRE(get_asm_line(1, 3) == "movl %eax, a1");
+	REQUIRE(get_asm_line(1, 4) == "movl %ebx, c1");
+	REQUIRE(get_asm_line(1, 26) == "leave");
+	REQUIRE(get_asm_line(1, 27) == "ret");
 	clear_asm_line(1);
 }
 
@@ -105,14 +109,20 @@ TEST_CASE ("codegen_test6", "check_pn"){
 	struct ast *ptr = tree->nodes[0].ptr_n;
 	//std::cout << AST_NAMES[ptr->nodes[3].ptr_n->type] << "\n";
 	gen_decl(ptr->nodes[3].ptr_n);
-	REQUIRE(get_asm_line(1, 11) == "movl %eax, pr1");
-	REQUIRE(get_asm_line(1, 12) == "movl pr1, %eax");
-	REQUIRE(get_asm_line(1, 13) == "addl l, %eax");
-	REQUIRE(get_asm_line(1, 14) == "movl %eax, pr1");
-	REQUIRE(get_asm_line(1, 15) == "movl pr1, %eax");
-	REQUIRE(get_asm_line(1, 16) == "addl n, %eax");
-	REQUIRE(get_asm_line(1, 17) == "movl %eax, pr1");
-	REQUIRE(get_asm_line(1, 18) == "movl pr1, %eax");
-	REQUIRE(get_asm_line(1, 19) == "addl $4, %eax");
-	REQUIRE(get_asm_line(1, 20) == "movl %eax, pr1");
+	/*for(unsigned int i = 0;;i++){
+		std::string str = get_asm_line(1, i);
+		std::cout << i << " " << str << "\n";
+		if(str == "###")
+			break;
+	}*/
+	REQUIRE(get_asm_line(1, 10) == "movl %eax, pr1");
+	REQUIRE(get_asm_line(1, 11) == "movl pr1, %eax");
+	REQUIRE(get_asm_line(1, 12) == "addl k, %eax");
+	REQUIRE(get_asm_line(1, 13) == "movl %eax, pr1");
+	REQUIRE(get_asm_line(1, 14) == "movl pr1, %eax");
+	REQUIRE(get_asm_line(1, 15) == "addl l, %eax");
+	REQUIRE(get_asm_line(1, 16) == "movl %eax, pr1");
+	REQUIRE(get_asm_line(1, 17) == "movl pr1, %eax");
+	REQUIRE(get_asm_line(1, 18) == "addl n, %eax");
+	REQUIRE(get_asm_line(1, 19) == "movl %eax, pr1");
 }

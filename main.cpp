@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
 	sem_analyzer(tree, &s);
 	//if(is_dump_asm){
 		str = codegen(str, tree, &s, is_dump_asm);
-		std::string call = "gcc -m32 ";
+		std::string call = "gcc -no-pie ";
 		call.append(str);
 		call.append(" -o ");
 		str.pop_back(); str.pop_back();
