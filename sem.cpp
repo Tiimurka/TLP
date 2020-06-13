@@ -95,7 +95,7 @@ int TypeHandler(Token *t){
 	}else if(t->TokenClass == TC_STRING)
 		return TC_T_STRING;
 	else{
-		//std::cout << "ekekek1\n";
+		std::cout << "error1\n";
 		return -1;
 	}
 }
@@ -107,7 +107,7 @@ int RetHandler(int ret1, int ret2){
 		return TC_T_REAL;
 	if(ret1 == TC_T_INT && ret2 == TC_T_INT)
 		return TC_T_INT;
-	//std::cout << "ekekek2\n";
+	std::cout << "error2\n";
 	return -1;
 }
 
@@ -159,8 +159,10 @@ int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublev
 		ret1 = sem_expr(tree->nodes[0].ptr_n, curr_level, curr_sublevel);
 	else if(tree->nodes[0].ptr_n != NULL && tree->nodes[0].ptr_n->type == AST_TYPE_ID){
 		ret1 = sem_id(tree->nodes[0].ptr_n, SEM_DEFAULT, curr_level, curr_sublevel);
-		if(ret1 < 0)
+		if(ret1 < 0){
+			std::cout << "error3\n";
 			return -1;
+		}
 	}
 	else{
 		//std::cout << tree->nodes[0].ptr_t->Lexeme << "\n";
@@ -171,8 +173,10 @@ int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublev
 		ret2 = sem_expr(tree->nodes[1].ptr_n, curr_level, curr_sublevel);
 	else if(tree->nodes[1].ptr_n != NULL && tree->nodes[1].ptr_n->type == AST_TYPE_ID){
 		ret2 = sem_id(tree->nodes[1].ptr_n, SEM_DEFAULT, curr_level, curr_sublevel);
-		if(ret2 < 0)
+		if(ret2 < 0){
+			std::cout << "error4\n";
 			return -1;
+		}
 	}
 	else{
 		//std::cout << tree->nodes[1].ptr_t->Lexeme << "\n";
@@ -224,11 +228,14 @@ int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsign
 	}else if(tree->type == AST_ASSIGN){
 		struct ast *assign = tree->nodes[0].ptr_n;
 		type = sem_id(assign, flg, curr_level, curr_sublevel);
-		if(type < 0)
+		if(type < 0){
+			std::cout << "error5\n";
 			return -1;
+		}
 		if(tree->nodes[1].type == AST_TYPE_NODE && tree->nodes[1].ptr_n->type == AST_TYPE_ID){
 			ret2 = sem_id(assign, flg, curr_level, curr_sublevel);
 			if(ret2 < 0)
+				std::cout << "error6\n";
 				return -1;
 		}else if(isBinop(tree->nodes[1].ptr_n) == false){
 			ret2 = TypeHandler(tree->nodes[1].ptr_n->nodes[0].ptr_t);
