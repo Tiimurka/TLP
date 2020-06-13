@@ -1067,6 +1067,7 @@ std::string codegen(std::string filename, struct ast *tree, class symtab *t, boo
 	fout << "main:\n";
 	fout << "pushq %rbp\n";
 	fout << "movq %rsp, %rbp\n";
+	//fout << "subq $16, %rsp\n";
 	if(is_print)
 		std::cout << "text\n.globl main\nmain:\n";
 	for(unsigned int i = 0; i < asm_text.size(); i++){
@@ -1076,6 +1077,8 @@ std::string codegen(std::string filename, struct ast *tree, class symtab *t, boo
 			std::cout << asm_text[i] << "\n";
 	}
 	//std::cout << "ret\n";
+	//fout << "pop %rbp\n";
+	fout << "leave\n";
 	fout << "ret\n";
 	return filename;
 }
