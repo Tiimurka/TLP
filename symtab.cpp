@@ -46,7 +46,6 @@ bool symtab::ast_handle(struct ast *tree){
 				}
 			}else if(node->type == AST_FUNC_DECL){
 				if(node->nodes[1].ptr_n != NULL && node->nodes[1].ptr_n->type == AST_VAR){
-					//std::cout << "Entering!\n";
 					struct ast *decl1 = node->nodes[1].ptr_n;
 					struct ast *decl2 = decl1->nodes[0].ptr_n;
 					struct tabnode *ins2;
@@ -56,7 +55,6 @@ bool symtab::ast_handle(struct ast *tree){
 							ins2->level = 1; ins2->sublevel = func_count;
 							ins2->type = decl1->nodes[1].ptr_t->TokenClass;
 							ins2->is_arr = false;
-							//std::cout << "func case, ins2 = " << ins2[0] << " " << ins2[1] << " " << decl->nodes[j].ptr_t->Lexeme << "\n";
 							table[decl2->nodes[j].ptr_t->Lexeme] = ins2;
 						}else{
 							std::cout << "Error:" << decl2->nodes[j].ptr_t->Lexeme << " is already declared\n";
@@ -72,8 +70,6 @@ bool symtab::ast_handle(struct ast *tree){
 }
 
 void symtab::show(){
-	/*for (auto x : table) 
-		std::cout << x.first << " " << x.second[0] << ", " << x.second[1] << "\n";*/
 	std::unordered_map<std::string, struct tabnode*>:: iterator itr;  
 	for (itr = table.begin(); itr != table.end(); itr++) 
 	{ 

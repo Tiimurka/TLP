@@ -3,7 +3,6 @@
 std::vector <std::string> asm_data;
 std::vector <std::string> asm_func;
 std::vector <std::string> asm_text;
-//std::vector <struct Token> p_notation;
 
 unsigned int fnum;
 unsigned int bnum;
@@ -14,7 +13,6 @@ class symtab *gtab;
 bool is_pr_created;
 bool is_func;
 bool is_mod;
-//bool pr_num;
 
 std::string get_asm_line(unsigned int part, unsigned int linenum){
 	if(part == 0){
@@ -57,7 +55,6 @@ int line_insert(std::string strins){
 }
 
 std::string choose_register(unsigned int num){
-	//num-=1;
 	switch(num){
 		case 0:
 			return "%esi";
@@ -97,7 +94,6 @@ int gen_var(struct ast *tree){
 		}
 		asm_data.push_back(vec_str);
 		vec_str.clear();
-		//vec_str.append("\n");
 		asm_data.push_back(vec_str);
 	}
 	return 0;
@@ -108,7 +104,6 @@ int gen_decl(struct ast *tree){
 	bool unpack = false;
 	int i = 1;
 	std::string fstr;
-	//std::cout << "current func is " << tree->nodes[0].ptr_t->Lexeme << "\n";
 	fstr.append(tree->nodes[0].ptr_t->Lexeme);
 	fstr.append(":");
 	line_insert(fstr);
@@ -133,9 +128,7 @@ int gen_decl(struct ast *tree){
 			fstr.clear();
 		}
 	}
-	//std::cout << "i = " << i << "\n";
 	gen_main(tree->nodes[i].ptr_n);
-	//std::cout << "azazaz\n";
 	line_insert("leave");
 	line_insert("ret");
 	is_func = false;
@@ -195,13 +188,11 @@ int op_type(unsigned int type){
 }
 
 std::string gen_pn(struct ast *tree, bool pn_num){
-	//std::cout << AST_NAMES[tree->type] << "\n";
 	std::string vec_str[6], str1, str2;
 	int type = op_type(tree->type);
 	if(type == 5)
 		is_mod = true;
 	int i = 0;
-	//std::cout << "starting pn, current operation is " << AST_NAMES[tree->type] << "\n";
 	if(!is_pr_created){
 		vec_str[0].append("pr1: .long 0");
 		asm_data.push_back(vec_str[0]);
@@ -217,7 +208,6 @@ std::string gen_pn(struct ast *tree, bool pn_num){
 	}
 	if(tree->nodes[0].type == AST_TYPE_NODE && tree->nodes[0].ptr_n->type == AST_TYPE_ID){
 		if(tree->nodes[0].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr1arr1\n";
 			vec_str[i].append("movl ");
 			if(tree->nodes[0].ptr_n->nodes[0].ptr_n->nodes[1].ptr_t->TokenClass == TC_NUM)
 				vec_str[i].append("$");
@@ -228,13 +218,10 @@ std::string gen_pn(struct ast *tree, bool pn_num){
 	}
 	vec_str[i].append("movl ");
 	if(tree->nodes[0].type == AST_TYPE_TOKEN){
-		//str1 = gen_pn_num(tree->nodes[0].ptr_t, false);
 		vec_str[i].append("$");
 		vec_str[i].append(tree->nodes[0].ptr_t->Lexeme);
 	}else if(tree->nodes[0].ptr_n->type == AST_TYPE_ID){
 		if(tree->nodes[0].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr2arr1\n";
-			//std::cout << tree->nodes[0].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme <<"\n";
 			vec_str[i].append(tree->nodes[0].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme);
 			vec_str[i].append("(, %ecx, 4)");
 		}else{
@@ -250,11 +237,8 @@ std::string gen_pn(struct ast *tree, bool pn_num){
 		vec_str[i].append("movl $0, %edx");
 		i++;
 	}
-	if(tree->nodes[1].ptr_n != NULL)
-		//std::cout << "grm, "<< AST_NAMES[tree/*->nodes[1].ptr_n*/->type] <<"\n";
 	if(tree->nodes[1].type == AST_TYPE_NODE && tree->nodes[1].ptr_n->type == AST_TYPE_ID){
 		if(tree->nodes[1].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr1arr1\n";
 			vec_str[i].append("movl ");
 			if(tree->nodes[1].ptr_n->nodes[0].ptr_n->nodes[1].ptr_t->TokenClass == TC_NUM)
 				vec_str[i].append("$");
@@ -263,13 +247,10 @@ std::string gen_pn(struct ast *tree, bool pn_num){
 			i++;
 		}
 	}
-	//std::cout << "azazaz\n";
 	if(type == 1 )
 		vec_str[i].append("addl ");
 	else if(type == 2)
 		vec_str[i].append("subl ");
-	//else if(type == 3)
-		//vec_str[i].append("imull ");
 	else if(type == 3 || type == 4 || type == 5)
 		vec_str[i].append("movl ");
 	
@@ -279,8 +260,6 @@ std::string gen_pn(struct ast *tree, bool pn_num){
 		vec_str[i].append(tree->nodes[1].ptr_t->Lexeme);
 	}else if(tree->nodes[1].ptr_n->type == AST_TYPE_ID){
 		if(tree->nodes[1].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr2arr1\n";
-			//std::cout << tree->nodes[1].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme <<"\n";
 			vec_str[i].append(tree->nodes[1].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme);
 			vec_str[i].append("(, %ecx, 4)");
 		}else{
@@ -325,13 +304,10 @@ std::string gen_pn(struct ast *tree, bool pn_num){
 int gen_inout_format(struct ast *tree, std::string *format){
 	struct ast *node;
 	for(unsigned int i = 1; i < tree->nodes.size(); i++){
-		//std::cout << "i = " << i << "\n";
 		node = tree->nodes[i].ptr_n;
-		//std::cout << "node type is " << AST_NAMES[node->type] << "\n";
 		if(node->type == AST_TYPE_STRING){
 			node->nodes[0].ptr_t->Lexeme.erase(0,1);
 			node->nodes[0].ptr_t->Lexeme.erase((node->nodes[0].ptr_t->Lexeme.size()-1),1);
-			//std::cout << node->nodes[0].ptr_t->Lexeme << "\n";
 			format->append(node->nodes[0].ptr_t->Lexeme);
 		}else if(node->type == AST_TYPE_ID && node->nodes[0].type == AST_TYPE_TOKEN){
 				struct tabnode* n = gtab->get(node->nodes[0].ptr_t->Lexeme);
@@ -342,7 +318,6 @@ int gen_inout_format(struct ast *tree, std::string *format){
 				}
 		}else if(is_binop(node->type)){
 			format->append("%d");
-			//gen_pn(n);
 		}else if(node->type == AST_TYPE_ID && node->nodes[0].type == AST_TYPE_NODE){
 			format->append("%d");
 		}
@@ -356,21 +331,17 @@ int gen_inout_args(struct ast *tree, int check){
 	struct ast *node;
 		for(unsigned int i = 1; i < tree->nodes.size(); i++){
 		node = tree->nodes[i].ptr_n;
-		//std::cout << "node type is " << AST_NAMES[node->type] << "\n";
 		std::string fstr;
 		if(node->type == AST_TYPE_ID && node->nodes[0].type == AST_TYPE_TOKEN){
 			node = tree->nodes[i].ptr_n;
-			//std::string fstr;
 			fstr.append("movl ");
 			struct tabnode* n = gtab->get(node->nodes[0].ptr_t->Lexeme);
-			//std::cout << TC_NAMES[n->type] << "\n";
 			if(n->type == TC_T_STRING || check == 3 || check == 4)
 				fstr.append("$");
 			fstr.append(node->nodes[0].ptr_t->Lexeme);
 			fstr.append(", ");
 			fstr.append(choose_register(k));
 			line_insert(fstr);
-			//std::cout << "kek: " << node->nodes[0].ptr_t->Lexeme << "\n";
 			++k;
 		}else if(is_binop(node->type)){
 			
@@ -379,14 +350,11 @@ int gen_inout_args(struct ast *tree, int check){
 			fstr.append(pnres);
 			fstr.append(", ");
 			fstr.append(choose_register(k));
-			//std::cout << "wow: " << pnres << "\n";
 			line_insert(fstr);
 			++k;
 		}else if(node->type == AST_TYPE_ID && node->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "gmm\n";
 			fstr.append("movl ");
 			struct ast *arrinfo = node->nodes[0].ptr_n;
-			//std::cout << "generating " << arrinfo->nodes[0].ptr_t->Lexeme << "[" << arrinfo->nodes[1].ptr_t->Lexeme << "]\n";
 			if(check == 1 || check == 2){
 				
 				
@@ -407,7 +375,6 @@ int gen_inout_args(struct ast *tree, int check){
 				if(arrinfo->nodes[1].ptr_t->TokenClass == TC_NUM){
 					fstr.append("$");
 					fstr.append(arrinfo->nodes[0].ptr_t->Lexeme);
-					//fstr.append("$");
 					fstr.append(std::to_string(atoi(arrinfo->nodes[1].ptr_t->Lexeme.c_str())*4));
 					line_insert(fstr);
 				}else if(arrinfo->nodes[1].ptr_t->TokenClass == TC_ID){
@@ -475,7 +442,6 @@ int gen_inout_args(struct ast *tree, int check){
 }
 
 int gen_inout_func(struct ast *tree, int check){
-	//std::cout << "check = "<< check <<"\n";
 	std::string format;
 	std::string fid;
 	std::string exstr;
@@ -485,10 +451,8 @@ int gen_inout_func(struct ast *tree, int check){
 	format.append(": ");
 	format.append(".string ");
 	format.append("\"");
-	//struct ast *node;
 	if(tree->nodes.size() > 1){
 		gen_inout_format(tree, &format);
-		//std::cout << "arrrrrrrr, \n";
 		gen_inout_args(tree, check);
 	}
 	if(check == 2)
@@ -507,10 +471,6 @@ int gen_inout_func(struct ast *tree, int check){
 		exstr.append("scanf");
 	line_insert(exstr);
 	exstr.clear();
-	//exstr.append("addl  $");
-	//exstr.append(std::to_string(shrink*4));
-	//exstr.append(", %esp");
-	//line_insert(exstr);
 	++fnum;
 	return 0;
 }
@@ -518,10 +478,8 @@ int gen_inout_func(struct ast *tree, int check){
 int gen_user_func(struct ast *tree){
 	std::string exstr;
 	std::string pre_arr;
-	//std::cout << "current func is " << tree->nodes[0].ptr_t->Lexeme << "\n";
 		if(tree->nodes.size() > 1){
 			for(unsigned int i = 1; i < tree->nodes.size(); i++){
-				//std::cout << "i = " << i << "\n";
 				if(tree->nodes[i].ptr_n->nodes[0].type == AST_TYPE_NODE){
 					exstr.append("movl ");
 					if(tree->nodes[i].ptr_n->nodes[0].ptr_n->nodes[1].ptr_t->TokenClass == TC_NUM)
@@ -558,8 +516,6 @@ int gen_user_func(struct ast *tree){
 }
 
 int gen_func(struct ast *tree){
-	//std::cout << "entered func!\n";
-	//int shrink = 1;
 	int check = is_inout(tree->nodes[0].ptr_t->Lexeme);
 	if(check != 0){
 		gen_inout_func(tree, check);
@@ -575,7 +531,7 @@ std::string gen_assign(struct ast *tree){
 	fstr.append("movl ");
 	g_strsave.clear();
 	if(is_binop(tree->nodes[1].ptr_n->type)){
-		/*std::string pnres = */gen_pn(tree->nodes[1].ptr_n, false);
+		gen_pn(tree->nodes[1].ptr_n, false);
 		if(is_mod){
 			fstr.append("%edx ");
 			is_mod = false;
@@ -640,10 +596,8 @@ std::string gen_assign(struct ast *tree){
 	}
 	fstr.append(", ");
 	if(tree->nodes[0].ptr_n->nodes[0].type == AST_TYPE_NODE){
-		//std::cout << "time for arr! ";
 		std::string pre_arr;
 		struct ast *arrinfo = tree->nodes[0].ptr_n->nodes[0].ptr_n;
-		//std::cout << arrinfo->nodes[0].ptr_t->Lexeme <<"["<<arrinfo->nodes[1].ptr_t->Lexeme<<"]\n";
 		pre_arr.append("movl $");
 		pre_arr.append(arrinfo->nodes[1].ptr_t->Lexeme);
 		if(arrinfo->nodes[1].ptr_t->TokenClass == TC_NUM)
@@ -696,7 +650,6 @@ int gen_if(struct ast *tree, unsigned int curr_bnum, unsigned int cb, bool is_pr
 	struct ast *cond = tree->nodes[0].ptr_n;
 	if(cond->nodes[1].type == AST_TYPE_NODE && cond->nodes[1].ptr_n->type == AST_TYPE_ID){
 		if(cond->nodes[1].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr1arr1\n";
 			vec_str[i].append("movl ");
 			if(cond->nodes[1].ptr_n->nodes[0].ptr_n->nodes[1].ptr_t->TokenClass == TC_NUM)
 				vec_str[i].append("$");
@@ -709,13 +662,10 @@ int gen_if(struct ast *tree, unsigned int curr_bnum, unsigned int cb, bool is_pr
 	vec_str[i].append("movl ");
 	
 	if(cond->nodes[1].type == AST_TYPE_TOKEN){
-		//str1 = gen_pn_num(tree->nodes[0].ptr_t, false);
 		vec_str[i].append("$");
 		vec_str[i].append(cond->nodes[1].ptr_t->Lexeme);
 	}else if(cond->nodes[1].ptr_n->type == AST_TYPE_ID){
 		if(cond->nodes[1].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr2arr1\n";
-			//std::cout << tree->nodes[0].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme <<"\n";
 			vec_str[i].append(cond->nodes[1].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme);
 			vec_str[i].append("(, %ecx, 4)");
 		}else{
@@ -730,7 +680,6 @@ int gen_if(struct ast *tree, unsigned int curr_bnum, unsigned int cb, bool is_pr
 	
 	if(cond->nodes[0].type == AST_TYPE_NODE && cond->nodes[0].ptr_n->type == AST_TYPE_ID){
 		if(cond->nodes[0].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr1arr1\n";
 			vec_str[i].append("movl ");
 			if(cond->nodes[0].ptr_n->nodes[0].ptr_n->nodes[1].ptr_t->TokenClass == TC_NUM)
 				vec_str[i].append("$");
@@ -744,8 +693,6 @@ int gen_if(struct ast *tree, unsigned int curr_bnum, unsigned int cb, bool is_pr
 	
 	if(cond->nodes[0].ptr_n->type == AST_TYPE_ID){
 		if(cond->nodes[0].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr2arr1\n";
-			//std::cout << tree->nodes[0].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme <<"\n";
 			vec_str[i].append(cond->nodes[0].ptr_n->nodes[0].ptr_n->nodes[0].ptr_t->Lexeme);
 			vec_str[i].append("(, %ecx, 4)");
 		}else{
@@ -832,11 +779,9 @@ int gen_choice(struct ast *tree){
 }
 
 int gen_loop(struct ast *tree){
-	//std::cout << "current loop is " << AST_NAMES[tree->type] << "\n";
 	unsigned int curr_lnum = lnum;
 	std::string strsave;
 	lnum++;
-	//int i = 0;
 	std::string str1;
 	std::string str2;
 	bool isarr;
@@ -850,7 +795,6 @@ int gen_loop(struct ast *tree){
 		check = tree->nodes[1].ptr_t->TokenClass;
 		strsave = g_strsave;
 	}else{
-		//int c;
 		if(tree->type == AST_WHILE)
 			c = 0;
 		else c = 1;
@@ -925,14 +869,11 @@ int gen_loop(struct ast *tree){
 		cond = tree->nodes[1].ptr_n->nodes[1].ptr_n;
 	}
 	if(cond != NULL && cond->type == AST_TYPE_ID && cond->nodes[0].type == AST_TYPE_NODE){
-		//if(cond->nodes[1].ptr_n->nodes[0].type == AST_TYPE_NODE){
-			//std::cout << "tr1arr1\n";
 			str1.append("movl $");
 			str1.append(cond->nodes[0].ptr_n->nodes[1].ptr_t->Lexeme);
 			str1.append(", %ecx");
 			line_insert(str1);
 			str1.clear();
-		//}
 	}
 	
 	str1.append("movl ");
@@ -1035,29 +976,21 @@ int codegen_init(class symtab *t){
 std::string codegen(std::string filename, struct ast *tree, class symtab *t, bool is_print){
 	codegen_init(t);
 	gen_pre(tree->nodes[0].ptr_n);
-	//std::cout << "pre has been passed\n";
 	gen_main(tree->nodes[1].ptr_n);
-	//std::cout << "gen finished\n";
 	std::ofstream fout;
 	filename.pop_back(); filename.pop_back(); filename.pop_back();
 	filename.append("s");
 	fout.open(filename);
-	//std::cout << ".data\n";
 	fout << ".data\n";
 	if(is_print)
 		std::cout << ".data\n";
 	for(unsigned int i = 0; i < asm_data.size(); i++){
-		//std::cout << asm_data[i] << "\n";
 		fout << asm_data[i] << "\n";
 		if(is_print)
 			std::cout << asm_data[i] << "\n";
 	}
-	//std::cout << ".text\n";
-	//std::cout << ".globl main\n";
-	//std::cout << "main:\n";
 	
 	for(unsigned int i = 0; i < asm_func.size(); i++){
-		//std::cout << asm_func[i] << "\n";
 		fout << asm_func[i] << "\n";
 		if(is_print)
 			std::cout << asm_func[i] << "\n";
@@ -1067,17 +1000,13 @@ std::string codegen(std::string filename, struct ast *tree, class symtab *t, boo
 	fout << "main:\n";
 	fout << "pushq %rbp\n";
 	fout << "movq %rsp, %rbp\n";
-	//fout << "subq $16, %rsp\n";
 	if(is_print)
 		std::cout << "text\n.globl main\nmain:\n";
 	for(unsigned int i = 0; i < asm_text.size(); i++){
-		//std::cout << asm_text[i] << "\n";
 		fout << asm_text[i] << "\n";
 		if(is_print)
 			std::cout << asm_text[i] << "\n";
 	}
-	//std::cout << "ret\n";
-	//fout << "pop %rbp\n";
 	fout << "leave\n";
 	fout << "ret\n";
 	return filename;

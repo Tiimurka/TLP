@@ -16,20 +16,16 @@ bool MinusHandler(char *pos){
 	unsigned int f = 1;
 	while(*(pos+f) == ' ')
 		f++;
-	//std::cout << "pos = " << *pos << ", b = " << b << " , pos-b = " << *(pos-b)<<", f = " << f << " , pos+f = " << *(pos+f)<<"\n";
 	if((*(pos+f) >= 'A' && *(pos+f) <= 'Z') || (*(pos+f) >= 'a' && *(pos+f) <= 'z') || *(pos+f) == '-')
 		return true;
 	if(*pos == '-' && (((*(pos-b) >= 'A' && *(pos-b) <= 'Z') || (*(pos-b) >= 'a' && *(pos-b) <= 'z') || *(pos-b) == '_' || *(pos-b) == ']'
 		|| (*(pos-b) >= '0' && *(pos-b) <= '9') || *(pos-b) == '=' ) || *(pos-b) == ')'))
 		return true;
-	//std::cout << "MH returning false!\n";
 	return false;
 }
 
 char ModSetter(char *pos, char mode){
-	//std::cout << "zaz" << std::endl;
 	char ret = MODE_OTHER;
-	//printf("pos = %c, mode = %d\n", *pos, mode);
 	if (mode == MODE_OTHER){
 		if ((*pos == '/' && *(pos+1) == '/') || (*pos == '{'))
 			ret = MODE_COMMENT;
@@ -43,7 +39,6 @@ char ModSetter(char *pos, char mode){
 		else
 			ret = MODE_OTHER;
 	}
-	//printf("ret = %d\n", ret);
 	return ret;
 }
 
@@ -112,11 +107,6 @@ bool NumCheck(char* lex){
 }
 
 int LexAdd(char* Lexeme){
-	/*std::cout << "I am adding lexeme " << Lexeme << ", its strlen is " << std::strlen(Lexeme);
-	std::printf(", and its sym nums is ");
-	for(unsigned int i = 0; i < std::strlen(Lexeme); i++)
-		printf("%d, ", Lexeme[i]);
-	printf("\n");*/
 	int check;
 	if(*Lexeme == '\0')
 		check = TC_FINAL;
@@ -212,51 +202,30 @@ int LexAdd(char* Lexeme){
 		check = TC_NUM;
 	else{
 		check = TC_UNKNOWN;
-		//return false;
 	}
-	/*Token t;
-	t.TokenClass = check;
-	t.Lexeme = Lexeme;
-	Tokens.push_back(t);
-	if(check == TC_UNKNOWN)
-		return false;
-	else
-		return true;*/
 	return check;
 }
 
 bool LexInit(std::ifstream *fin){
 	current_col = 0;
 	current_row = 1;
-	//std::cout << "zaz\n";
-	//buf[current_col] = '\0';
 	if(!(fin->getline(buf, 150)))
 				return false;
 	return true;
 }
 
 void move_lex_pos(int value){
-	//std::cout << "current_col is " << current_col << " changing it by " << value << "\n";
 	current_col += value;
 }
 
-Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
-	//std::cout << "Current row is " << current_row << "\n";
+Token *GetNextToken(std::ifstream *fin){
 	Token *t = new Token;
 	t->TokenClass = TC_UNKNOWN;
 	char sym;
-	//bool result = true;
-	//std::ifstream fin;
-	//fin.open(filename);
-	//std::ifstream fin("nod.pas");
 	int j;
 	int mode = MODE_OTHER;
 	bool isFirst = true;
-	while (1/*fin.getline(buf, 150)*/){
-		//std::cout << "hey" << std::endl;
-		
-		//std::cout << "Current buf (mode = " << mode << "): " << buf << std::endl;
-		//fin >> buf;
+	while (1){
 		if(buf[current_col] == '\0'){
 			unsigned int prev_col = current_col;
 			current_col = 0;
@@ -275,22 +244,14 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 			return t;
 		}
 			char* parse = buf+current_col;
-			//char part[100];
-			//mode = ModSetter(parse);
 			while(parse != NULL && *parse != '\0'){
 				if(mode == MODE_OTHER)
 					mode = ModSetter(parse, mode);
-				//std::cout << "mode = "<< mode << ", *parse = " << *parse;
-				//std::printf("(%d)\n", *parse);
 				if(mode == MODE_COMMENT && ((*parse == '/' && *(parse+1) == '/') || (*parse == '{'))){
 					j = 0;
 					sym = *parse;
-					//isCommentMode_ = true;
-					//mode = MODE_COMMENT;
-					//std::cout << "I am in the comment mode now!" << std::endl;
 					str1[j] = *parse;
 					if(sym == '/'){
-						//std::cout << "muhaha" << std::endl;
 						++parse;
 						++j;
 						current_col++;
@@ -301,14 +262,12 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 					if((*(parse+1) == '\0' && sym == '/') || *parse == '}'){
 						str1[j] = *parse;
 						str1[j+1] = '\0';
-						//LexAddComment(Tokens, str1);
 						current_col++;
 						t->TokenClass = TC_COMMENT;
 						t->row = current_row;
 						t->col = current_col;
 						t->Lexeme = str1;
 						return t;
-						//mode = MODE_OTHER;
 					}else if (*(parse+1) == '\0'){
 						//++j;
 						str1[j] = ' ';
@@ -317,7 +276,6 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 						++j;
 					}
 				}else if ((*parse == ' ' || *parse == 13 || *parse == 9) && mode == MODE_OTHER){
-					//std::cout << "Passing... " << std::endl;
 					parse++;
 					current_col++;
 					continue;
@@ -327,19 +285,12 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 					current_col++;
 					str1[1] = *parse;
 					str1[2] = '\0';
-					//int check;
-						//if(std::strlen(str1) == 0)
-							//check = true;
-						//else
 					current_col++;
 					t->TokenClass = LexAdd(str1);
 					t->row = current_row;
 					t->col = current_col;
 					t->Lexeme = str1;
 					return t;
-						//if(!check)
-							//result = false;
-					//mode = MODE_OTHER;
 				}else if(mode == MODE_SYM1){
 					str1[0] = *parse;
 					str1[1] = '\0';
@@ -349,18 +300,6 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 					t->col = current_col;
 					t->Lexeme = str1;
 					return t;
-					//bool check;
-						/*if(std::strlen(str1) == 0)
-							check = true;
-						else{
-							str1[0] = *parse;
-							str1[1] = '\0';
-							check = LexAdd(Tokens, str1);
-						}
-						if(!check)
-							result = false;*/
-					//mode = MODE_OTHER;
-
 				}else if(*parse == '\'' && mode == MODE_STRING && isFirst){
 					j = 0;
 					str1[j] = *parse;
@@ -375,9 +314,6 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 					t->col = current_col;
 					t->Lexeme = str1;
 					return t;
-					//LexAddString(Tokens, str1, true);
-					//mode = MODE_OTHER;
-					//isFirst = true;
 				}else if(mode == MODE_STRING){
 					str1[j] = *parse;
 					if(*(parse+1) == '\0'){
@@ -388,9 +324,6 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 						t->col = current_col;
 						t->Lexeme = str1;
 						return t;
-						//LexAddString(Tokens, str1, false);
-						//result = false;
-						//mode = MODE_OTHER;
 					}
 					++j;
 				}else if(mode == MODE_OTHER){
@@ -398,10 +331,8 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 						j = 0;
 						isFirst = false;
 					}
-					//std::cout << "current *parse is " << *parse << "\n";
 					str1[j] = *parse;
 					if((ModSetter(parse+1, MODE_OTHER) != MODE_OTHER) || *(parse+1) == '\0' || *(parse+1) == ' ' || *(parse+1) == 9 || *(parse+1) == 13){
-						//std::cout << "current token is " << *parse << "\n";
 						current_col++;
 						str1[j+1] = '\0';
 						t->TokenClass = LexAdd(str1);
@@ -409,8 +340,6 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 						t->col = current_col;
 						t->Lexeme = str1;
 						return t;
-						//LexAdd(Tokens, str1);
-						//isFirst = true;
 					}
 					++j;
 				}
@@ -419,8 +348,6 @@ Token *GetNextToken(std::ifstream *fin/*, std::vector<Token> &Tokens*/){
 			}
 
 	}
-	//fin.close();
-	//return result;
 }
 
 char* get_current_buf(){

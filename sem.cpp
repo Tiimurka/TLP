@@ -3,15 +3,12 @@
 class symtab *tab;
 
 int sem_id(struct ast *tree, unsigned int flag, unsigned int curr_level, unsigned int curr_sublevel){
-	//std::cout << "Entering sem_id, "<< AST_NAMES[tree->type] <<"\n";
 	struct tabnode* n;
-	//int ret = 0;
 	Token *t;
 		if(tree->nodes[tree->nodes.size()-1].type == AST_TYPE_NODE){
 		struct ast *ptr1 = tree->nodes[tree->nodes.size()-1].ptr_n;
 			if(ptr1->type == AST_ARR){
 				float check = std::atof(ptr1->nodes[1].ptr_t->Lexeme.c_str());
-				//std::cout << "getting "<<ptr1->nodes[0].ptr_t->Lexeme<<"\n";
 				n = tab->get(ptr1->nodes[0].ptr_t->Lexeme);
 				if(n == NULL){
 					std::cout << 
@@ -38,10 +35,7 @@ int sem_id(struct ast *tree, unsigned int flag, unsigned int curr_level, unsigne
 				t = ptr1->nodes[0].ptr_t;
 			}
 		}else{
-			//std::cout << "getting "<<tree->nodes[0].ptr_t->Lexeme<<"\n";
 			n = tab->get(tree->nodes[0].ptr_t->Lexeme);
-			//if(tree->nodes[0].ptr_t == NULL)
-				//std::cout << "azazaz\n";
 			t = tree->nodes[0].ptr_t;
 			if(n == NULL){
 				std::cout << 
@@ -54,7 +48,6 @@ int sem_id(struct ast *tree, unsigned int flag, unsigned int curr_level, unsigne
 				return -1;
 			}
 		}
-		//row = t->row;
 		if(n == NULL)
 			std::cout << "azazaz\n";
 		if(n->level > curr_level){
@@ -73,7 +66,6 @@ int sem_id(struct ast *tree, unsigned int flag, unsigned int curr_level, unsigne
 bool isBinop(struct ast *node){
 	if(node == NULL)
 		return false;
-	//std::cout << "entering isBinop, type = "<< AST_NAMES[node->type] <<"\n";
 	unsigned int type = node->type;
 	if(type == AST_BINOP_PLUS || type == AST_BINOP_MINUS || type ==  AST_BINOP_SLASH ||
 	type ==  AST_BINOP_ASTER || type ==  AST_BINOP_DIV || type ==  AST_BINOP_MOD ||
@@ -84,7 +76,6 @@ bool isBinop(struct ast *node){
 }
 
 int TypeHandler(Token *t){
-	//std::cout << "entering type handler with " << t->Lexeme << "\n"; 
 	if(t->TokenClass == TC_NUM){
 		float check = std::atof(t->Lexeme.c_str());
 		check -= (int)check;
@@ -122,7 +113,6 @@ bool is_b_str(int ret1, int ret2){
 }
 
 bool checkTypeForBinop(unsigned int type, int ret1, int ret2){
-	//int ret = 0;
 	if(ret1 == -1 || ret2 == -1)
 		return false;
 	switch (type){
@@ -152,9 +142,7 @@ bool checkTypeForBinop(unsigned int type, int ret1, int ret2){
 }
 
 int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublevel){
-	//std::cout << "Entering sem_expr, type = "<< AST_NAMES[tree->type] <<"\n";
 	int ret1, ret2;
-	//std::cout<< AST_NAMES[tree->type] << "\n";
 	if(isBinop(tree->nodes[0].ptr_n))
 		ret1 = sem_expr(tree->nodes[0].ptr_n, curr_level, curr_sublevel);
 	else if(tree->nodes[0].ptr_n != NULL && tree->nodes[0].ptr_n->type == AST_TYPE_ID){
@@ -165,7 +153,6 @@ int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublev
 		}
 	}
 	else{
-		//std::cout << tree->nodes[0].ptr_t->Lexeme << "\n";
 		ret1 = TypeHandler(tree->nodes[0].ptr_t);
 	}
 	
@@ -179,7 +166,6 @@ int sem_expr(struct ast *tree, unsigned int curr_level, unsigned int curr_sublev
 		}
 	}
 	else{
-		//std::cout << tree->nodes[1].ptr_t->Lexeme << "\n";
 		ret2 = TypeHandler(tree->nodes[1].ptr_t);
 	}
 	bool check = checkTypeForBinop(tree->type, ret1, ret2);
@@ -203,19 +189,15 @@ bool AssignCheck(unsigned int ret1, unsigned int ret2){
 }
 
 int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsigned int curr_sublevel){
-	//struct tabnode* n;
-	//std::cout << "Entering sem_rec, type = "<< AST_NAMES[tree->type]<< "\n";
 	unsigned int flg = flag;
 	int ret = 0;
 	unsigned int i = 0;
-	//unsigned int row;
 	int ret2;
 	int type;
 	if(tree->type == AST_DECL_ARRAY){
 		
 		for(unsigned int j = 0; j < 2; j++){
 			float check = std::atof(tree->nodes[j].ptr_t->Lexeme.c_str());
-			//std::cout << check << "\n";
 			check -= (int)check;
 			if(check != 0){
 				std::cout << "Line " << tree->nodes[j].ptr_t->row << 
@@ -240,7 +222,6 @@ int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsign
 		}else if(isBinop(tree->nodes[1].ptr_n) == false){
 			ret2 = TypeHandler(tree->nodes[1].ptr_n->nodes[0].ptr_t);
 		}
-		// row = assign->nodes[0].ptr_t->row;
 		flg = SEM_EXPR;
 		i++;
 	}
@@ -256,14 +237,12 @@ int sem_rec(struct ast *tree, unsigned int flag, unsigned int curr_level, unsign
 			}
 		}
 	}else if(flg == SEM_EXPR){
-		//for(; i < tree->nodes.size(); i++){
 		if(isBinop(tree->nodes[1].ptr_n))
 			ret2 = sem_expr(tree->nodes[1].ptr_n, curr_level, curr_sublevel);
-		if(ret2 < 0)
+		if(ret2 < 0){
+			std::cout << "nerror6\n";
 			return -1;
-		//}
-		//if(ret2 > 0)
-			//std::cout << TC_NAMES[ret2] << "\n";
+		}
 		if(tree->type == AST_ASSIGN){
 			if(!AssignCheck(type, ret2)){
 				std::cout <<"Line "<< tree->row <<" Error: " << TC_NAMES[ret2] << "cannot be assigned to " <<
@@ -280,11 +259,9 @@ struct ast * sem_analyzer(struct ast *tree, class symtab *t){
 	tab = t;
 	int ret = sem_rec(tree, SEM_DEFAULT, 0, 0);
 	if(ret >= 0){
-		std::cout << "Your semantycs is awesome!\n";
 		return tree;
 	}
 	else{
-		std::cout << "Your semantycs isn't awesome. Try again\n";
 		return NULL;
 	}
 }
